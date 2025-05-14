@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MagazineController" prefWidth="800" prefHeight="500">
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem fx:id="loadFile" text="Load File"/>
+                        <MenuItem fx:id="createNewMagazine" text="Create New Magazine"/>
+                        <MenuItem fx:id="saveFile" text="Save File"/>
+                    </items>
+                </Menu>
+                <Menu fx:id="homeButton" text="Home"/>
+                <Menu text="Create">
+                    <items>
+                        <MenuItem fx:id="createPaying" text="Paying Customer"/>
+                        <MenuItem fx:id="createAssociate" text="Associate Customer"/>
+                        <MenuItem fx:id="createEnterprise" text="Enterprise Customer"/>
+                    </items>
+                </Menu>
+                <Menu text="Edit">
+                    <items>
+                        <MenuItem fx:id="editCustomer" text="Edit Selected Customer"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+
+    <center>
+        <SplitPane>
+            <items>
+                <TreeView fx:id="treeView" minWidth="250.0">
+                    <root>
+                        <TreeItem fx:id="treeRoot" value="Magazine Service" expanded="true"/>
+                    </root>
+                </TreeView>
+
+                <VBox fx:id="rightPane" spacing="10.0">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                    <children>
+                        <Label text="Details Panel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <Label text="Customer Type:"/>
+                        <Label fx:id="typeLabel"/>
+
+                        <Label text="Name:"/>
+                        <Label fx:id="nameLabel"/>
+
+                        <Label text="Email:"/>
+                        <Label fx:id="emailLabel"/>
+                        
+                        <Label text="Contact Person:"/>
+                        <Label fx:id="contactLabel"/>
+
+                        <Label text="Payment Method:"/>
+                        <Label fx:id="paymentLabel"/>
+
+                        <Label text="Subscribed Supplements:"/>
+                        <Label fx:id="supplementsLabel" wrapText="true" maxWidth="400"/>
+
+                        <Button fx:id="editCustomerButton" text="Edit" onAction="#handleEdit"/>
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+
+    <bottom>
+        <Label fx:id="footer" text="Status: Ready"/>
+    </bottom>
+</BorderPane>
