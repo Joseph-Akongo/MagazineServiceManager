@@ -10,9 +10,10 @@
             <menus>
                 <Menu text="File">
                     <items>
-                        <MenuItem fx:id="loadFile" text="Load File"/>
-                        <MenuItem fx:id="createNewMagazine" text="Create New Magazine"/>
-                        <MenuItem fx:id="saveFile" text="Save File"/>
+                        <MenuItem fx:id="loadFile" text="Load Magazine" onAction="#handleLoadFile"/>
+                        <MenuItem fx:id="saveFile" text="Save Magazine" onAction="#handleSaveFile"/>
+                        <SeparatorMenuItem />
+                        <MenuItem fx:id="exitApp" text="Exit" onAction="#handleExit"/>
                     </items>
                 </Menu>
                 <Menu fx:id="homeButton" text="Home"/>

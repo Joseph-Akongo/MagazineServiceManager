@@ -318,8 +318,13 @@ public class MagazineService {
     public static List<Magazine> getMagazines() {
         return magazines;
     }
+    
+    public static Magazine getMagazine() {
+        return magazines.isEmpty() ? null : magazines.get(0);
+    }
 
     public static void clearMagazines() {
         magazines.clear();
     }
+
 }

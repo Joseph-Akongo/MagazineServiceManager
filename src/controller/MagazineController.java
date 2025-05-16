@@ -2,9 +2,11 @@ package controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.*;
 import service.MagazineService;
+import util.FileHelper;
 
 public class MagazineController {
 
@@ -141,15 +144,9 @@ public class MagazineController {
     }
 
     private void loadTreeData() {
-        TreeItem<String> root;
-
-        // Use the first magazine as the root label, or fallback if list is empty
-        List<Magazine> magazines = MagazineService.getMagazines();
-        if (!magazines.isEmpty()) {
-            root = new TreeItem<>(magazines.get(0).getName());
-        } else {
-            root = new TreeItem<>("Magazine Service");
-        }
+        Magazine mag = MagazineService.getMagazine();
+        String rootLabel = (mag != null) ? mag.getName() : "Magazine Service";
+        TreeItem<String> root = new TreeItem<>(rootLabel);
 
         TreeItem<String> payingNode = new TreeItem<>("Paying Customers");
         TreeItem<String> associateNode = new TreeItem<>("Associate Customers");
@@ -157,13 +154,9 @@ public class MagazineController {
 
         for (Customer c : MagazineService.getCustomers()) {
             TreeItem<String> item = new TreeItem<>(c.getName());
-            if (c instanceof EnterpriseCustomer) {
-                enterpriseNode.getChildren().add(item);
-            } else if (c instanceof PayingCustomer) {
-                payingNode.getChildren().add(item);
-            } else if (c instanceof AssociateCustomer) {
-                associateNode.getChildren().add(item);
-            }
+            if (c instanceof EnterpriseCustomer) enterpriseNode.getChildren().add(item);
+            else if (c instanceof PayingCustomer) payingNode.getChildren().add(item);
+            else associateNode.getChildren().add(item);
         }
 
         root.getChildren().addAll(payingNode, associateNode, enterpriseNode);
@@ -201,4 +194,43 @@ public class MagazineController {
             footer.setText("No file selected.");
         }
     }
+    
+    @FXML
+    private void handleLoadFile() {
+        FileChooser fileChooser = FileHelper.getDatFileChooser("Open Magazine File", false);
+        File file = fileChooser.showOpenDialog(treeView.getScene().getWindow());
+        if (FileHelper.loadMagazineFromFile(file)) {
+            loadTreeData();
+            footer.setText("Magazine loaded: " + file.getName());
+        } else {
+            showAlert("Load Failed", "Could not load magazine from file.");
+        }
+    }
+
+    @FXML
+    private void handleSaveFile() {
+        FileChooser fileChooser = FileHelper.getDatFileChooser("Save Magazine File", true);
+        File file = fileChooser.showSaveDialog(treeView.getScene().getWindow());
+        if (FileHelper.saveMagazineToFile(file)) {
+            footer.setText("Magazine saved: " + file.getName());
+        } else {
+            showAlert("Save Failed", "Could not save magazine to file.");
+        }
+    }
+
+    @FXML
+    private void handleExit() {
+        Platform.exit();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    
+
 }
