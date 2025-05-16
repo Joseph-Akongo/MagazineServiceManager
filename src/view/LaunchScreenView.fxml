@@ -5,7 +5,6 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LaunchScreenController">
-
     <center>
         <VBox spacing="20" alignment="CENTER">
             <padding>
@@ -21,9 +20,18 @@
             <HBox spacing="15" alignment="CENTER">
                 <Button fx:id="startButton" text="Start New Magazine" onAction="#handleStart"/>
                 <Button fx:id="loadButton" text="Load Data File" onAction="#handleLoad"/>
-                <Button text="Load Preset Data" onAction="#handleLoadPreset"/>
                 <Button text="Exit" onAction="#handleExit"/>
             </HBox>
         </VBox> 
     </center>
+    <MenuBar>
+    <menus>
+        <Menu text="Options">
+            <items>
+                <MenuItem text="Load Preset Data" onAction="#handleLoadPreset"/>
+            </items>
+        </Menu>
+    </menus>
+</MenuBar>
+
 </BorderPane>

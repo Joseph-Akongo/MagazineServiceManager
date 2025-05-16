@@ -46,21 +46,4 @@ public class Magazine implements Serializable{
     public float getCost() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    }
-//class Singleton {
-//    private static Singleton singleInstance = null;
-//
-//    public String name;
-//    public int price;
-//    
-//    private Singleton(){
-//        this.name = name;
-//        this.price = price; 
-//    }
-//
-//    public static synchronized getInstance(){
-//        if(singleInstance == null)
-//            singleInstance = new Singleton();
-//        return singleInstance;
-//    }
-//}
+}

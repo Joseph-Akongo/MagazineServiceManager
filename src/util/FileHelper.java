@@ -10,6 +10,7 @@ import service.MagazineService;
 
 import java.io.*;
 import java.util.List;
+import javafx.scene.control.Alert;
 
 public class FileHelper {
     
@@ -42,10 +43,19 @@ public class FileHelper {
     }
 
     public static boolean loadMagazineFromFile(File file) {
-        if (file != null && file.exists()) {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-                MagazineData data = (MagazineData) in.readObject();
+        if (file == null || !file.exists()) {
+            showAlert("Load Failed", "No file selected or file does not exist.");
+            return false;
+        }
 
+        if (file.length() == 0) {
+            showAlert("Load Failed", "The selected file is empty.");
+            return false;
+        }
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            Object obj = in.readObject();
+            if (obj instanceof MagazineData data) {
                 MagazineService.clearCustomers();
                 MagazineService.setAvailableSupplements(data.getSupplements());
                 MagazineService.setMagazine(new Magazine(data.getMagazineName(), data.getPrice()));
@@ -53,27 +63,57 @@ public class FileHelper {
                     MagazineService.addCustomer(c);
                 }
                 return true;
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } else {
+                showAlert("Load Failed", "Invalid file format.");
+                return false;
             }
+        } catch (EOFException e) {
+            showAlert("Load Failed", "The selected file appears to be corrupted or incomplete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Load Failed", "An unexpected error occurred while loading the file.");
         }
+
         return false;
     }
 
     public static boolean saveMagazineToFile(File file) {
-        if (file != null) {
-            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-                Magazine magazine = (Magazine) MagazineService.getMagazines();
-                List<Customer> customers = MagazineService.getCustomers();
-                List<model.Supplement> supplements = MagazineService.getAvailableSupplements();
-
-                MagazineData data = new MagazineData(magazine.getName(), magazine.getCost(), supplements, customers);
-                out.writeObject(data);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            // Gather all data into MagazineData
+           List<Magazine> magazines = MagazineService.getMagazines();
+            if (magazines.isEmpty()) {
+                showAlert("Save Error", "No magazine exists to save.");
+                return false;
             }
+            Magazine magazine = magazines.get(0);  // ✅ Get the first magazine
+
+            MagazineData data = new MagazineData(
+                magazine.getName(),
+                magazine.getPrice(),
+                MagazineService.getAvailableSupplements(),
+                MagazineService.getCustomers()
+            );
+            
+            System.out.println("Saving magazine: " + data.getMagazineName());
+            System.out.println("Price: " + data.getPrice());
+            System.out.println("Customers: " + data.getCustomers().size());
+            System.out.println("Supplements: " + data.getSupplements().size());
+
+            out.writeObject(data);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Save Error", "Failed to save magazine to file.");
+            return false;
         }
-        return false;
     }
+    
+    private static void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+}
+
 }

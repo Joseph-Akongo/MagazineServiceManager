@@ -13,6 +13,7 @@ import service.MagazineService;
 import util.FileHelper;
 
 import java.io.File;
+import javafx.scene.control.Alert;
 
 public class LaunchScreenController {
 
@@ -57,6 +58,13 @@ public class LaunchScreenController {
     public void handleLoadPreset() {
         HardCodedData.loadData();
         MagazineService.setMagazine(new Magazine("Preset Weekly", 7.99f));
+        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Preset Data Loaded");
+        alert.setHeaderText(null);
+        alert.setContentText("Hardcoded magazine data has been successfully loaded.");
+        alert.showAndWait();
+        
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MagazineServiceView.fxml"));
             Parent root = loader.load();
