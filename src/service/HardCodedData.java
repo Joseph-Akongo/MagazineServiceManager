@@ -101,6 +101,7 @@ public class HardCodedData {
             out.writeObject(data);
             System.out.println("magazineData.dat saved successfully.");
         } catch (IOException e) {
+            System.err.println("magazinedata.dat Saved successfully");
             e.printStackTrace();
         }
     }

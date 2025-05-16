@@ -11,11 +11,15 @@ import java.io.Serializable;
  */
 
 // EnterpriseCustomer a specialized PayingCustomer who orders multiple copies for a company
-public class EnterpriseCustomer extends PayingCustomer {
+public class EnterpriseCustomer extends PayingCustomer implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private PaymentMethod paymentMethod;
 
     // Inner static class to represent a point of contact for the enterprise
     public static class ContactPerson implements Serializable {
+        private static final long serialVersionUID = 1L;
+        
         private String contactName;
         private String contactEmail;
 

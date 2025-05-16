@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -9,7 +11,9 @@ package model;
  */
 
 // Wraper for payment methods Credit Card / Direct Debit and ensures only one type is used at a time.
-public class PaymentMethod {
+public class PaymentMethod implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String method;
     private CreditCard card;
     private DirectDebit debit;

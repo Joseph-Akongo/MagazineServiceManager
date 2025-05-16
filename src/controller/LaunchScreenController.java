@@ -68,6 +68,10 @@ public class LaunchScreenController {
                 for (Customer c : data.getCustomers()) {
                     MagazineService.addCustomer(c);
                 }
+                
+                System.out.println("Loaded: " + data.getMagazineName());
+                System.out.println("Supplements: " + data.getSupplements().size());
+                System.out.println("Customers: " + data.getCustomers().size());
 
                 // Load the main view
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MagazineServiceView.fxml"));

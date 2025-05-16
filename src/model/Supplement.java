@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -8,7 +10,9 @@ package model;
  */
 
 // Add-on to a customer's magazine subscription.
-public class Supplement {
+public class Supplement implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String name;
     private double weeklyCost;
 

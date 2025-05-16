@@ -8,9 +8,12 @@ package model;
  *          Used as a payment method in the subscription system.
  */
 
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class DirectDebit {
+public class DirectDebit implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     // Private fields for account number and BSB
     private int accountNumber;
     private int bsb;

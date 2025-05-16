@@ -1,6 +1,11 @@
 package model;
 
-public class EmailService {
+import java.io.Serializable;
+
+public class EmailService implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     public static String generateWeeklyEmail(Customer customer, double magazineCost) {
         if (customer instanceof EnterpriseCustomer) {
             EnterpriseCustomer ec = (EnterpriseCustomer) customer;

@@ -9,9 +9,11 @@ package model;
  */
 
 // CreditCard extends PaymentMethod — using inheritance to specialize payment behavior
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class CreditCard {
+public class CreditCard implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     // Encapsulated fields specific to credit card payment
     private String cardNumber;

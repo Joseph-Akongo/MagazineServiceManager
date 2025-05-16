@@ -8,11 +8,14 @@ package model;
  *          Stores payment method and a list of associated customers.
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 // PayingCustomer inherits from Customer and adds associates and a billing method
-public class PayingCustomer extends Customer {
+public class PayingCustomer extends Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     // Associates linked to this paying customer 
     private List<AssociateCustomer> associates = new ArrayList<>();
 

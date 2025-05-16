@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -9,7 +11,8 @@ package model;
  */
 
 // AssociateCustomer is a specialized type of Customer functionality from the base class
-public class AssociateCustomer extends Customer {
+public class AssociateCustomer extends Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     // The PayingCustomer who is responsible for this Associate's billing object association
     private PayingCustomer payer;

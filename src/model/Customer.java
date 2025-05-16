@@ -8,10 +8,12 @@ package model;
  *          This class serves as the base for more specific customer types like PayingCustomer and AssociateCustomer.
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Customer {
+public class Customer implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private String email;
