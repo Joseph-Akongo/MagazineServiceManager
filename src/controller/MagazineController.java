@@ -142,6 +142,27 @@ public class MagazineController {
             e.printStackTrace();
         }
     }
+    
+    @FXML
+    private void handleCreateSupplement() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CreateSupplementView.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Create Supplement");
+            stage.setScene(new Scene(root));
+            stage.initOwner(treeView.getScene().getWindow()); // or use any visible node
+            stage.showAndWait();
+
+            // Optional: refresh data if supplements affect the view
+            loadTreeData();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to open supplement creation window.").showAndWait();
+        }
+    }
 
     private void loadTreeData() {
         Magazine mag = MagazineService.getMagazine();

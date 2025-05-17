@@ -22,6 +22,7 @@
                         <MenuItem fx:id="createPaying" text="Paying Customer"/>
                         <MenuItem fx:id="createAssociate" text="Associate Customer"/>
                         <MenuItem fx:id="createEnterprise" text="Enterprise Customer"/>
+                        <MenuItem fx:id="createSupplementItem" text="Supplement" onAction="#handleCreateSupplement"/>
                     </items>
                 </Menu>
                 <Menu text="Edit">

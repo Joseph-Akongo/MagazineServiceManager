@@ -24,14 +24,17 @@
             </HBox>
         </VBox> 
     </center>
-    <MenuBar>
-    <menus>
-        <Menu text="Options">
-            <items>
-                <MenuItem text="Load Preset Data" onAction="#handleLoadPreset"/>
-            </items>
-        </Menu>
-    </menus>
-</MenuBar>
-
+    <top>
+    <HBox alignment="TOP_RIGHT">
+        <MenuBar>
+            <menus>
+                <Menu text="Options">
+                    <items>
+                        <MenuItem text="Load Preset Data" onAction="#handleLoadPreset"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </HBox>
+</top>
 </BorderPane>

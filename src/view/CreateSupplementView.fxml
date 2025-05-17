@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.CreateSupplementController"
+          hgap="10" vgap="10">
+
+    <Label text="Supplement Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+    <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+    <Label text="Weekly Cost:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+    <TextField fx:id="costField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+    <HBox spacing="10" GridPane.rowIndex="2" GridPane.columnIndex="1">
+        <Button text="Save" onAction="#handleSave"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</GridPane>
