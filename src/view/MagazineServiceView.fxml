@@ -42,39 +42,41 @@
                         <TreeItem fx:id="treeRoot" value="Magazine Service" expanded="true"/>
                     </root>
                 </TreeView>
+                <VBox spacing="15">
+                    <Label text="Customer Details" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
 
-                <VBox fx:id="rightPane" spacing="10.0">
-                    <padding>
-                        <Insets top="15" right="15" bottom="15" left="15"/>
-                    </padding>
-                    <children>
-                        <Label text="Details Panel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <GridPane hgap="10" vgap="8">
+                        <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                        <Label text="Customer Type:"/>
-                        <Label fx:id="typeLabel"/>
+                        <Label text="Type:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="typeLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Name:"/>
-                        <Label fx:id="nameLabel"/>
+                        <Label fx:id="payerLabelTitle" text="Payer:" GridPane.rowIndex="2" GridPane.columnIndex="0" visible="false" managed="false"/>
+                        <Label fx:id="payerLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" visible="false" managed="false"/>
+                    </GridPane>
 
-                        <Label text="Email:"/>
-                        <Label fx:id="emailLabel"/>
-                        
-                        <Label text="Contact Person:"/>
-                        <Label fx:id="contactLabel"/>
-
+                    <!-- Paying Customer Section -->
+                    <VBox fx:id="payingBox" spacing="5" visible="false" managed="false">
                         <Label text="Payment Method:"/>
-                        <Label fx:id="paymentLabel"/>
+                        <Label fx:id="paymentMethodLabel"/>
+                    </VBox>
 
-                        <Label text="Subscribed Supplements:"/>
-                        <Label fx:id="supplementsLabel" wrapText="true" maxWidth="400"/>
+                    <!-- Enterprise Customer Section -->
+                    <VBox fx:id="enterpriseBox" spacing="5" visible="false" managed="false">
+                        <Label text="Contact Person:"/>
+                        <Label fx:id="contactPersonLabel"/>
+                    </VBox>
 
-                        <Button fx:id="editCustomerButton" text="Edit" onAction="#handleEdit"/>
-                    </children>
+                    <!-- Supplements Section -->
+                    <VBox fx:id="supplementsBox" spacing="5">
+                        <Label text="Supplements:"/>
+                        <ListView fx:id="supplementList" prefHeight="120"/>
+                    </VBox>
                 </VBox>
             </items>
         </SplitPane>
     </center>
-
     <bottom>
         <Label fx:id="footer" text="Status: Ready"/>
     </bottom>

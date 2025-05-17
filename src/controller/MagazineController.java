@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.*;
@@ -24,28 +25,30 @@ public class MagazineController {
     @FXML private TreeView<String> treeView;
     @FXML private Label typeLabel;
     @FXML private Label nameLabel;
-    @FXML private Label emailLabel;
-    @FXML private Label paymentLabel;
-    @FXML private Label supplementsLabel;
+    @FXML private Label payerLabel;
+    @FXML private Label paymentMethodLabel;
+    @FXML private Label contactPersonLabel;
     @FXML private Label footer;
-
+    @FXML private Label payerLabelTitle;
+    @FXML private VBox payingBox;
+    @FXML private VBox enterpriseBox;
     @FXML private MenuItem createPaying;
     @FXML private MenuItem createAssociate;
     @FXML private MenuItem createEnterprise;
     @FXML private MenuItem editCustomer;
     @FXML private MenuItem loadFile;
-    @FXML private Label contactLabel;
+    
+    @FXML private ListView<String> supplementList;
 
     @FXML
     public void initialize() {
         loadTreeData();
-
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null) return;
-            String selectedName = newVal.getValue();
-            Customer customer = MagazineService.findCustomerByName(selectedName);
-            if (customer != null) {
-                updateDetailView(customer);
+            if (newVal != null) {
+                Customer selectedCustomer = MagazineService.findCustomerByName(newVal.getValue());
+                if (selectedCustomer != null) {
+                    updateDetailView(selectedCustomer);
+                }
             }
         });
         
@@ -57,40 +60,55 @@ public class MagazineController {
     }
 
     private void updateDetailView(Customer customer) {
-        typeLabel.setText(
-            customer instanceof EnterpriseCustomer ? "Enterprise"
-          : customer instanceof PayingCustomer    ? "Paying"
-          : "Associate"
-        );
+        if (customer == null) return;
 
         nameLabel.setText(customer.getName());
-        emailLabel.setText(customer.getEmail());
+        typeLabel.setText(customer.getClass().getSimpleName());
 
-        // Payment info
-        if (customer instanceof PayingCustomer) {
-            paymentLabel.setText(((PayingCustomer) customer).getPaymentMethod().toString());
-        } else {
-            paymentLabel.setText("");
-        }
+        // Reset all conditional UI sections
+        payerLabel.setVisible(false);
+        payerLabelTitle.setVisible(false);
+        payingBox.setVisible(false);
+        payingBox.setManaged(false);
+        enterpriseBox.setVisible(false);
+        enterpriseBox.setManaged(false);
 
-        // Supplements
-        StringBuilder supplements = new StringBuilder();
-        for (Supplement s : customer.getSupplements()) {
-            supplements.append(s.toString()).append("\n");
-        }
-        supplementsLabel.setText(supplements.toString());
-
-        if (customer instanceof EnterpriseCustomer) {
-            EnterpriseCustomer ec = (EnterpriseCustomer) customer;
-            EnterpriseCustomer.ContactPerson cp = ec.getContact();
-
-            if (cp != null) {
-                contactLabel.setText(cp.getContactDetails());  // e.g., "Jane Doe (jdoe@...)"
-            } else {
-                contactLabel.setText("N/A");
+        // Handle supplements
+        supplementList.getItems().clear();
+        if (customer.getSupplements() != null && !customer.getSupplements().isEmpty()) {
+            for (Supplement s : customer.getSupplements()) {
+                supplementList.getItems().add(s.getName() + " ($" + s.getWeeklyCost() + ")");
             }
-        } else {
-            contactLabel.setText("");
+        }
+
+        // Show associate payer
+        if (customer instanceof AssociateCustomer ac) {
+            payerLabel.setText(ac.getPayer().getName());
+            payerLabel.setVisible(true);
+            payerLabelTitle.setVisible(true);
+        }
+
+        // Show payment method
+        if (customer instanceof PayingCustomer pc && !(customer instanceof EnterpriseCustomer)) {
+            payingBox.setVisible(true);
+            payingBox.setManaged(true);
+            paymentMethodLabel.setText(pc.getPaymentMethod() != null ? pc.getPaymentMethod().toString() : "N/A");
+        }
+
+        // Show enterprise contact
+        if (customer instanceof EnterpriseCustomer ec) {
+            enterpriseBox.setVisible(true);
+            enterpriseBox.setManaged(true);
+            if (ec.getContact() != null) {
+                contactPersonLabel.setText(ec.getContact().getContactDetails());
+            } else {
+                contactPersonLabel.setText("No contact person");
+            }
+
+            // Show payment method for enterprise too
+            payingBox.setVisible(true);
+            payingBox.setManaged(true);
+            paymentMethodLabel.setText(ec.getPaymentMethod() != null ? ec.getPaymentMethod().toString() : "N/A");
         }
     }
 
@@ -165,19 +183,20 @@ public class MagazineController {
     }
 
     private void loadTreeData() {
-        Magazine mag = MagazineService.getMagazine();
-        String rootLabel = (mag != null) ? mag.getName() : "Magazine Service";
-        TreeItem<String> root = new TreeItem<>(rootLabel);
-
+        TreeItem<String> root = new TreeItem<>("Customers");
         TreeItem<String> payingNode = new TreeItem<>("Paying Customers");
         TreeItem<String> associateNode = new TreeItem<>("Associate Customers");
         TreeItem<String> enterpriseNode = new TreeItem<>("Enterprise Customers");
 
         for (Customer c : MagazineService.getCustomers()) {
             TreeItem<String> item = new TreeItem<>(c.getName());
-            if (c instanceof EnterpriseCustomer) enterpriseNode.getChildren().add(item);
-            else if (c instanceof PayingCustomer) payingNode.getChildren().add(item);
-            else associateNode.getChildren().add(item);
+            if (c instanceof EnterpriseCustomer) {
+                enterpriseNode.getChildren().add(item);
+            } else if (c instanceof PayingCustomer) {
+                payingNode.getChildren().add(item);
+            } else if (c instanceof AssociateCustomer) {
+                associateNode.getChildren().add(item);
+            }
         }
 
         root.getChildren().addAll(payingNode, associateNode, enterpriseNode);
