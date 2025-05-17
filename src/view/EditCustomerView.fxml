@@ -4,19 +4,66 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EditCustomerController" hgap="10" vgap="10">
-    <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-    <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+<VBox spacing="15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EditCustomerController">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
-    <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-    <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    <Label text="Edit Customer Details" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
-    <Label text="Supplements:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-    <VBox fx:id="supplementBox" spacing="5" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+    <GridPane hgap="10" vgap="10">
+        <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-    <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1">
-        <Button fx:id="saveButton" text="Save" onAction="#handleSave" disable="true"/>
-        <Button text="Cancel" onAction="#handleCancel"/>
+        <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <Label text="Supplements:"/>
+    <ListView fx:id="supplementList" prefHeight="100"/>
+
+    <!-- Payer Section for Associate -->
+    <VBox fx:id="associateBox" spacing="5" visible="false" managed="false">
+        <Label text="Select Payer:"/>
+        <ComboBox fx:id="payerCombo"/>
+    </VBox>
+
+    <!-- Payment Section -->
+    <VBox fx:id="payingBox" spacing="10" visible="false" managed="false">
+        <Label text="Payment Method:"/>
+        <ComboBox fx:id="paymentMethodCombo"/>
+
+        <!-- Credit Card Fields -->
+        <VBox fx:id="creditCardFields" spacing="5" visible="false" managed="false">
+            <Label text="Card Number:"/>
+            <TextField fx:id="cardNumberField" promptText="Card Number"/>
+
+            <Label text="Expiry:"/>
+            <TextField fx:id="expiryField" promptText="MM/YY"/>
+
+            <Label text="Card Holder Name:"/>
+            <TextField fx:id="cardNameField" promptText="Card Holder Name"/>
+        </VBox>
+
+        <!-- Direct Debit Fields -->
+        <VBox fx:id="debitFields" spacing="5" visible="false" managed="false">
+            <Label text="Account Number:"/>
+            <TextField fx:id="accountNumberField" promptText="Account Number"/>
+
+            <Label text="BSB:"/>
+            <TextField fx:id="bsbField" promptText="BSB"/>
+        </VBox>
+    </VBox>
+
+    <!-- Enterprise Contact Info -->
+    <VBox fx:id="enterpriseBox" spacing="5" visible="false" managed="false">
+        <Label text="Contact Name:"/>
+        <TextField fx:id="contactNameField"/>
+        <Label text="Contact Email:"/>
+        <TextField fx:id="contactEmailField"/>
+    </VBox>
+
+    <!-- Buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="saveButton" text="Save" onAction="#handleSave"/>
+        <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
     </HBox>
-</GridPane>
-
+</VBox>

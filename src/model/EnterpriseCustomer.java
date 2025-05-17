@@ -60,6 +60,10 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
         return paymentMethod;
     }
     
+    public void setContact(ContactPerson contact) {
+        this.contact = contact;
+    }
+
     @Override
     public String getSpecificInfo() {
         return paymentMethod != null ? paymentMethod.toString() : "";
@@ -71,4 +75,5 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
             this.paymentMethod = new PaymentMethod(info);  // Again, adjust if needed
         }
     }
+    
 }

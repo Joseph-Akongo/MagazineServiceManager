@@ -28,6 +28,13 @@ public class AssociateCustomer extends Customer implements Serializable {
         return payer;
     }
     
+    public void setPayer(PayingCustomer payer){
+        if(payer == null){
+            throw new IllegalArgumentException("Payer cannot be null!");
+        }
+        this.payer = payer;
+    }
+    
     @Override
     public String getSpecificInfo(){
         return payer != null ? payer.getName() : "";

@@ -56,19 +56,21 @@
                         <Label fx:id="payerLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" visible="false" managed="false"/>
                     </GridPane>
 
-                    <!-- Paying Customer Section -->
+                    <!-- Payment box (for Paying & Enterprise customers) -->
                     <VBox fx:id="payingBox" spacing="5" visible="false" managed="false">
                         <Label text="Payment Method:"/>
                         <Label fx:id="paymentMethodLabel"/>
                     </VBox>
 
-                    <!-- Enterprise Customer Section -->
+                    <!-- Enterprise-specific info -->
                     <VBox fx:id="enterpriseBox" spacing="5" visible="false" managed="false">
                         <Label text="Contact Person:"/>
                         <Label fx:id="contactPersonLabel"/>
+                        <Label text="Number of Copies:"/>
+                        <Label fx:id="numberOfCopiesLabel"/>
                     </VBox>
 
-                    <!-- Supplements Section -->
+                    <!-- Supplements -->
                     <VBox fx:id="supplementsBox" spacing="5">
                         <Label text="Supplements:"/>
                         <ListView fx:id="supplementList" prefHeight="120"/>

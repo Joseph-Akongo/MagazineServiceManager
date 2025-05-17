@@ -30,6 +30,7 @@ public class MagazineController {
     @FXML private Label contactPersonLabel;
     @FXML private Label footer;
     @FXML private Label payerLabelTitle;
+    @FXML private Label numberOfCopiesLabel;
     @FXML private VBox payingBox;
     @FXML private VBox enterpriseBox;
     @FXML private MenuItem createPaying;
@@ -60,55 +61,56 @@ public class MagazineController {
     }
 
     private void updateDetailView(Customer customer) {
-        if (customer == null) return;
-
-        nameLabel.setText(customer.getName());
-        typeLabel.setText(customer.getClass().getSimpleName());
-
-        // Reset all conditional UI sections
+        // Reset visibility
         payerLabel.setVisible(false);
+        payerLabel.setManaged(false);
         payerLabelTitle.setVisible(false);
+        payerLabelTitle.setManaged(false);
         payingBox.setVisible(false);
         payingBox.setManaged(false);
         enterpriseBox.setVisible(false);
         enterpriseBox.setManaged(false);
 
-        // Handle supplements
-        supplementList.getItems().clear();
-        if (customer.getSupplements() != null && !customer.getSupplements().isEmpty()) {
-            for (Supplement s : customer.getSupplements()) {
-                supplementList.getItems().add(s.getName() + " ($" + s.getWeeklyCost() + ")");
-            }
-        }
+        // Common
+        nameLabel.setText(customer.getName());
+        typeLabel.setText(customer.getClass().getSimpleName());
 
-        // Show associate payer
+        // AssociateCustomer: show payer
         if (customer instanceof AssociateCustomer ac) {
             payerLabel.setText(ac.getPayer().getName());
             payerLabel.setVisible(true);
+            payerLabel.setManaged(true);
             payerLabelTitle.setVisible(true);
+            payerLabelTitle.setManaged(true);
         }
 
-        // Show payment method
+        // PayingCustomer (but not Enterprise)
         if (customer instanceof PayingCustomer pc && !(customer instanceof EnterpriseCustomer)) {
             payingBox.setVisible(true);
             payingBox.setManaged(true);
             paymentMethodLabel.setText(pc.getPaymentMethod() != null ? pc.getPaymentMethod().toString() : "N/A");
         }
 
-        // Show enterprise contact
+        // EnterpriseCustomer: show contact, copies, and payment
         if (customer instanceof EnterpriseCustomer ec) {
             enterpriseBox.setVisible(true);
             enterpriseBox.setManaged(true);
-            if (ec.getContact() != null) {
-                contactPersonLabel.setText(ec.getContact().getContactDetails());
-            } else {
-                contactPersonLabel.setText("No contact person");
-            }
 
-            // Show payment method for enterprise too
+            contactPersonLabel.setText(ec.getContact() != null
+                ? ec.getContact().getContactDetails()
+                : "No contact person");
+
+            numberOfCopiesLabel.setText(String.valueOf(ec.getNumberOfCopies()));
+
             payingBox.setVisible(true);
             payingBox.setManaged(true);
             paymentMethodLabel.setText(ec.getPaymentMethod() != null ? ec.getPaymentMethod().toString() : "N/A");
+        }
+
+        // Supplements
+        supplementList.getItems().clear();
+        for (Supplement s : customer.getSupplements()) {
+            supplementList.getItems().add(s.getName() + " ($" + s.getWeeklyCost() + ")");
         }
     }
 
