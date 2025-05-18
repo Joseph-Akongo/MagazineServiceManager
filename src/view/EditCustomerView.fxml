@@ -33,22 +33,14 @@
 
         <!-- Credit Card Fields -->
         <VBox fx:id="creditCardFields" spacing="5" visible="false" managed="false">
-            <Label text="Card Number:"/>
             <TextField fx:id="cardNumberField" promptText="Card Number"/>
-
-            <Label text="Expiry:"/>
             <TextField fx:id="expiryField" promptText="MM/YY"/>
-
-            <Label text="Card Holder Name:"/>
             <TextField fx:id="cardNameField" promptText="Card Holder Name"/>
         </VBox>
 
         <!-- Direct Debit Fields -->
         <VBox fx:id="debitFields" spacing="5" visible="false" managed="false">
-            <Label text="Account Number:"/>
             <TextField fx:id="accountNumberField" promptText="Account Number"/>
-
-            <Label text="BSB:"/>
             <TextField fx:id="bsbField" promptText="BSB"/>
         </VBox>
     </VBox>

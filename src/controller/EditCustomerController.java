@@ -8,13 +8,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.*;
 import service.MagazineService;
+import model.CreditCard;
+import model.DirectDebit;
 
 public class EditCustomerController {
 
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private ListView<CheckBox> supplementList;
-    @FXML private Button cancelButton;
 
     @FXML private ComboBox<String> paymentMethodCombo;
     @FXML private TextField cardNumberField;
@@ -33,13 +34,20 @@ public class EditCustomerController {
 
     private Customer customer;
 
+    @FXML
+    private void initialize() {
+        paymentMethodCombo.setItems(FXCollections.observableArrayList("Credit Card", "Direct Debit"));
+        paymentMethodCombo.setOnAction(e -> togglePaymentFields());
+    }
+    
     public void setCustomer(Customer customer) {
         this.customer = customer;
 
+        // Set basic fields
         nameField.setText(customer.getName());
         emailField.setText(customer.getEmail());
 
-        // Load supplements
+        // Populate supplements with selection
         supplementList.getItems().clear();
         for (Supplement s : MagazineService.getAvailableSupplements()) {
             CheckBox cb = new CheckBox(s.getName());
@@ -48,7 +56,15 @@ public class EditCustomerController {
             supplementList.getItems().add(cb);
         }
 
-        // AssociateCustomer: show payer options
+        // Hide all optional sections initially
+        associateBox.setVisible(false);
+        associateBox.setManaged(false);
+        payingBox.setVisible(false);
+        payingBox.setManaged(false);
+        enterpriseBox.setVisible(false);
+        enterpriseBox.setManaged(false);
+
+        // AssociateCustomer 
         if (customer instanceof AssociateCustomer ac) {
             associateBox.setVisible(true);
             associateBox.setManaged(true);
@@ -59,56 +75,58 @@ public class EditCustomerController {
                     .toList();
 
             payerCombo.setItems(FXCollections.observableArrayList(payers));
-            payerCombo.getSelectionModel().select(ac.getPayer().getName());
+            if (ac.getPayer() != null) {
+                payerCombo.getSelectionModel().select(ac.getPayer().getName());
+            }
         }
 
-        // PayingCustomer (includes EnterpriseCustomer)
+        // PayingCustomer (incl. EnterpriseCustomer) 
         if (customer instanceof PayingCustomer pc) {
             payingBox.setVisible(true);
             payingBox.setManaged(true);
 
+            // Always set ComboBox items
+            
             PaymentMethod method = pc.getPaymentMethod();
-            if (method != null && method.getMethod() != null) {
-                Object actualMethod = method.getMethod();
+            Object actualMethod = method.getMethod();
 
-                if (actualMethod instanceof CreditCard) {
-                    CreditCard cc = (CreditCard) actualMethod;
-                    paymentMethodCombo.setValue("Credit Card");
-                    cardNumberField.setText(cc.getCardNumber());
-                    expiryField.setText(cc.getExpiryDate());
-                    cardNameField.setText(cc.getCardHolderName());
+            if (actualMethod instanceof CreditCard cc) {
+                paymentMethodCombo.setValue("Credit Card");
+                cardNumberField.setText(cc.getCardNumber());
+                expiryField.setText(cc.getExpiryDate());
+                cardNameField.setText(cc.getCardHolderName());
 
-                } else if (actualMethod instanceof DirectDebit) {
-                    DirectDebit dd = (DirectDebit) actualMethod;
-                    paymentMethodCombo.setValue("Direct Debit");
-                    accountNumberField.setText(String.valueOf(dd.getAccountNumber()));
-                    bsbField.setText(String.valueOf(dd.getBsb()));
-                } else {
-                    // Handle unexpected method types gracefully
-                    showAlert("Invalid Payment Method", "Unrecognized payment method type.");
-                    paymentMethodCombo.setValue(null);
-                }
-
-                togglePaymentFields(); // Update UI based on selection
+            } else if (actualMethod instanceof DirectDebit dd) {
+                paymentMethodCombo.setValue("Direct Debit");
+                accountNumberField.setText(String.valueOf(dd.getAccountNumber()));
+                bsbField.setText(String.valueOf(dd.getBsb()));
+            } else if (actualMethod instanceof String str) {
+                // Known legacy or invalid data fallback
+                paymentMethodCombo.setValue(null);
+                showAlert("Unsupported Payment Method", "Expected a CreditCard or DirectDebit, but got a raw string: " + str);
+            } else {
+                paymentMethodCombo.setValue(null);
+                showAlert("Unknown Payment Method", "Unrecognized type: " + actualMethod.getClass().getSimpleName());
             }
+            // Show the correct fields based on type
+            togglePaymentFields();
+        }
 
-        // EnterpriseCustomer: show contact details
+        // EnterpriseCustomer 
         if (customer instanceof EnterpriseCustomer ec) {
             enterpriseBox.setVisible(true);
             enterpriseBox.setManaged(true);
-                if (ec.getContact() != null) {
-                    String name = contactNameField.getText();
-                    String email = contactEmailField.getText();
-                    ec.setContact(new EnterpriseCustomer.ContactPerson(name, email));
-                } else {
-                    contactNameField.clear();
-                    contactEmailField.clear();
-                    showAlert("No Contact Info", "Enterprise contact person not available.");
-                }
+
+            EnterpriseCustomer.ContactPerson contact = ec.getContact();
+            if (contact != null) {
+                contactNameField.setText(contact.getContactName());
+                contactEmailField.setText(contact.getContactEmail());
+            } else {
+                contactNameField.clear();
+                contactEmailField.clear();
             }
         }
     }
-    
     
     private void togglePaymentFields() {
         boolean isCard = "Credit Card".equals(paymentMethodCombo.getValue());
@@ -118,21 +136,6 @@ public class EditCustomerController {
 
         debitFields.setVisible(!isCard);
         debitFields.setManaged(!isCard);
-    }
-
-    @FXML
-    private void initialize() {
-        paymentMethodCombo.setItems(FXCollections.observableArrayList("Credit Card", "Direct Debit"));
-
-        paymentMethodCombo.valueProperty().addListener((obs, old, selected) -> {
-            boolean isCard = "Credit Card".equals(selected);
-            cardNumberField.setDisable(!isCard);
-            expiryField.setDisable(!isCard);
-            cardNameField.setDisable(!isCard);
-
-            accountNumberField.setDisable(isCard);
-            bsbField.setDisable(isCard);
-        });
     }
 
     @FXML
@@ -196,11 +199,6 @@ public class EditCustomerController {
             e.printStackTrace();
         }
     }
-
-    @FXML
-    private void handleCancel() {
-        ((Stage) cancelButton.getScene().getWindow()).close();
-    }
     
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -209,42 +207,11 @@ public class EditCustomerController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-    private String promptInput(String title, String message) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle(title);
-        dialog.setHeaderText(null);
-        dialog.setContentText(message);
-        return dialog.showAndWait().orElse(null);
-    }
-
-    private String promptChoice(String title, String message, String... options) {
-        ChoiceDialog<String> dialog = new ChoiceDialog<>(options[0], options);
-        dialog.setTitle(title);
-        dialog.setHeaderText(null);
-        dialog.setContentText(message);
-        return dialog.showAndWait().orElse(null);
-    }
     
-    private void showCreditFields() {
-        creditCardFields.setVisible(true);
-        creditCardFields.setManaged(true);
-        debitFields.setVisible(false);
-        debitFields.setManaged(false);
+    @FXML
+    private void handleCancel() {
+        // Close the current window
+        Stage stage = (Stage) nameField.getScene().getWindow();
+        stage.close();
     }
-
-    private void showDebitFields() {
-        creditCardFields.setVisible(false);
-        creditCardFields.setManaged(false);
-        debitFields.setVisible(true);
-        debitFields.setManaged(true);
-    }
-
-    private void hidePaymentFields() {
-        creditCardFields.setVisible(false);
-        creditCardFields.setManaged(false);
-        debitFields.setVisible(false);
-        debitFields.setManaged(false);
-    }
-
 }

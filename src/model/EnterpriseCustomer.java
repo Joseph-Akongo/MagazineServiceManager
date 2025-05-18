@@ -32,6 +32,15 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
         public String getContactDetails() {
             return contactName + " (" + contactEmail + ")";
         }
+        
+        public String getContactName() {
+            return contactName;
+        }
+
+        public String getContactEmail() {
+            return contactEmail;
+        }
+
     }
 
     // Each EnterpriseCustomer has a contact person
@@ -51,6 +60,7 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
     public ContactPerson getContact() {
         return contact;
     }
+    
 
     public int getNumberOfCopies() {
         return numberOfCopies;
