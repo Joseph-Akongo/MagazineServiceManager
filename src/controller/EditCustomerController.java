@@ -33,8 +33,6 @@ public class EditCustomerController {
     @FXML private TextField contactEmailField;
 
     private Customer customer;
-    private CreditCard creditCard;
-    private DirectDebit directDebit;
     
     
     @FXML
@@ -45,18 +43,10 @@ public class EditCustomerController {
     
     public void setCustomer(Customer customer) {
         this.customer = customer;
-        
-        CreditCard creditCard = new CreditCard();
-        DirectDebit directDebit = new DirectDebit();
 
         // Set basic fields
         nameField.setText(customer.getName());
         emailField.setText(customer.getEmail());
-        cardNumberField.setText(creditCard.getCardNumber());
-        expiryField.setText(creditCard.getExpiryDate());
-        cardNameField.setText(creditCard.getCardHolderName());
-        // accountNumberField.setText(directDebit.getAccountNumber());
-        // bsbField.setText(directDebit.getBsb());
 
         // Populate supplements with selection
         supplementList.getItems().clear();
@@ -96,28 +86,29 @@ public class EditCustomerController {
             payingBox.setVisible(true);
             payingBox.setManaged(true);
 
-            // Always set ComboBox items
-            
+            // Downcast methods 
             PaymentMethod method = pc.getPaymentMethod();
             Object actualMethod = method.getMethod();
-
-            if (actualMethod instanceof CreditCard cc) {
+            CreditCard creditCard = method.getCard();
+            DirectDebit directDebit = method.getDebit();
+            
+            if (creditCard instanceof CreditCard) {
                 paymentMethodCombo.setValue("Credit Card");
-                cardNumberField.setText(cc.getCardNumber());
-                expiryField.setText(cc.getExpiryDate());
-                cardNameField.setText(cc.getCardHolderName());
+                cardNumberField.setText(creditCard.getCardNumber());
+                expiryField.setText(creditCard.getExpiryDate());
+                cardNameField.setText(creditCard.getCardHolderName());
 
-            } else if (actualMethod instanceof DirectDebit dd) {
+            } else if (directDebit instanceof DirectDebit dd) {
                 paymentMethodCombo.setValue("Direct Debit");
                 accountNumberField.setText(String.valueOf(dd.getAccountNumber()));
-                bsbField.setText(String.valueOf(dd.getBsb()));
+                bsbField.setText(String.valueOf(directDebit.getBsb()));
             } else if (actualMethod instanceof String str) {
                 // Known legacy or invalid data fallback
                 paymentMethodCombo.setValue(null);
                 showAlert("Unsupported Payment Method", "Expected a CreditCard or DirectDebit, but got a raw string: " + str);
             } else {
                 paymentMethodCombo.setValue(null);
-                showAlert("Unknown Payment Method", "Unrecognized type: " + actualMethod.getClass().getSimpleName());
+                showAlert("Unknown Payment Method", "Unrecognized type: " + method.getClass().getSimpleName());
             }
             // Show the correct fields based on type
             togglePaymentFields();
