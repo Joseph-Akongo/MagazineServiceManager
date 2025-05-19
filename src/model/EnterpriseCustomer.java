@@ -82,7 +82,7 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
     @Override
     public void setSpecificInfo(String info) {
         if (info != null && !info.isEmpty()) {
-            this.paymentMethod = new PaymentMethod(info);  // Again, adjust if needed
+            this.paymentMethod = new PaymentMethod(info);  // probs not needed
         }
     }
     

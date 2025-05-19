@@ -105,6 +105,7 @@ public class MagazineController {
             payingBox.setVisible(true);
             payingBox.setManaged(true);
             paymentMethodLabel.setText(ec.getPaymentMethod() != null ? ec.getPaymentMethod().toString() : "N/A");
+            System.out.println(ec.getPaymentMethod());
         }
 
         // Supplements
