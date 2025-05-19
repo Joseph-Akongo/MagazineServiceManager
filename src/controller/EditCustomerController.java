@@ -1,4 +1,4 @@
-package controller;
+    package controller;
 
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -33,7 +33,10 @@ public class EditCustomerController {
     @FXML private TextField contactEmailField;
 
     private Customer customer;
-
+    private CreditCard creditCard;
+    private DirectDebit directDebit;
+    
+    
     @FXML
     private void initialize() {
         paymentMethodCombo.setItems(FXCollections.observableArrayList("Credit Card", "Direct Debit"));
@@ -42,10 +45,18 @@ public class EditCustomerController {
     
     public void setCustomer(Customer customer) {
         this.customer = customer;
+        
+        CreditCard creditCard = new CreditCard();
+        DirectDebit directDebit = new DirectDebit();
 
         // Set basic fields
         nameField.setText(customer.getName());
         emailField.setText(customer.getEmail());
+        cardNumberField.setText(creditCard.getCardNumber());
+        expiryField.setText(creditCard.getExpiryDate());
+        cardNameField.setText(creditCard.getCardHolderName());
+        // accountNumberField.setText(directDebit.getAccountNumber());
+        // bsbField.setText(directDebit.getBsb());
 
         // Populate supplements with selection
         supplementList.getItems().clear();

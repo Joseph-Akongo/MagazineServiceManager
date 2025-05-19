@@ -28,6 +28,10 @@ public class DirectDebit implements Serializable {
         this.bsb = bsb;
     }
 
+    public DirectDebit() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     // Validation method for account number (1 to 8 digits)
     public int checkAccountNumber(int accountNumber) {
         if (accountNumber <= 0 || accountNumber > 99999999) {
