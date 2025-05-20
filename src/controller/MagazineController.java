@@ -2,10 +2,8 @@ package controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,10 +19,12 @@ import service.MagazineService;
 import util.FileHelper;
 
 public class MagazineController {
-
+    
+    @FXML private ListView<String> supplementList;
     @FXML private TreeView<String> treeView;
     @FXML private Label typeLabel;
     @FXML private Label nameLabel;
+    @FXML private Label emailLabel;
     @FXML private Label payerLabel;
     @FXML private Label paymentMethodLabel;
     @FXML private Label contactPersonLabel;
@@ -38,8 +38,6 @@ public class MagazineController {
     @FXML private MenuItem createEnterprise;
     @FXML private MenuItem editCustomer;
     @FXML private MenuItem loadFile;
-    
-    @FXML private ListView<String> supplementList;
 
     @FXML
     public void initialize() {
@@ -73,6 +71,7 @@ public class MagazineController {
 
         // Common
         nameLabel.setText(customer.getName());
+        emailLabel.setText(customer.getEmail());
         typeLabel.setText(customer.getClass().getSimpleName());
 
         // AssociateCustomer: show payer
@@ -121,7 +120,7 @@ public class MagazineController {
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
-            stage.setTitle("New Dialog");
+            stage.setTitle("Create");
             stage.showAndWait();
             loadTreeData();
         } catch (Exception ex) {
@@ -129,17 +128,17 @@ public class MagazineController {
         }
     }
 
-    @FXML
     private void handleEdit() {
         TreeItem<String> selectedItem = treeView.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
-            footer.setText("Please select a customer to edit.");
+            showAlert("No Selection", "Please select a customer to edit.");
             return;
         }
 
-        Customer customer = MagazineService.findCustomerByName(selectedItem.getValue());
-        if (customer == null) {
-            footer.setText("Customer not found.");
+        String customerName = selectedItem.getValue();
+        Customer selectedCustomer = MagazineService.findCustomerByName(customerName);
+        if (selectedCustomer == null) {
+            showAlert("Error", "Selected customer not found.");
             return;
         }
 
@@ -148,18 +147,30 @@ public class MagazineController {
             Parent root = loader.load();
 
             EditCustomerController controller = loader.getController();
-            controller.setCustomer(customer);
+            // Pass both the customer and the TreeItem so it can be updated directly
+            controller.setCustomer(selectedCustomer, selectedItem);
 
             Stage stage = new Stage();
             stage.setTitle("Edit Customer");
             stage.setScene(new Scene(root));
-            stage.initOwner(treeView.getScene().getWindow());
-            stage.showAndWait();
+            stage.showAndWait();  // Wait until the edit window is closed
 
-            updateDetailView(customer);
-            loadTreeData();
+            // Refresh the detail view with the updated data
+            updateDetailView(selectedCustomer);
 
-        } catch (Exception e) {
+            // Print updated info for verification
+            System.out.print("Updated customer: " + selectedCustomer.getName() + ", Email: " + 
+                    selectedCustomer.getEmail() + ", Supplements: " + selectedCustomer.getSupplements().size());
+            
+            // If Associate, print the payer
+            if (selectedCustomer instanceof AssociateCustomer ac) {
+                System.out.println(", Payer: " + (ac.getPayer() != null ? ac.getPayer().getName() : "None"));
+            }
+            
+            System.out.println();
+
+        } catch (IOException e) {
+            showAlert("Error", "Could not load edit view.");
             e.printStackTrace();
         }
     }
@@ -205,6 +216,14 @@ public class MagazineController {
         root.getChildren().addAll(payingNode, associateNode, enterpriseNode);
         root.setExpanded(true);
         treeView.setRoot(root);
+    }
+    
+    public void refreshTreeView() {
+        treeView.getRoot().getChildren().clear();
+        for (Customer c : MagazineService.getCustomers()) {
+            TreeItem<String> customerItem = new TreeItem<>(c.getName());
+            treeView.getRoot().getChildren().add(customerItem);
+        }
     }
     
     public void handleLoad() {
@@ -273,7 +292,14 @@ public class MagazineController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
     
+    private static MagazineController instance;
 
+    public MagazineController() {
+        instance = this;
+    }
+
+    public static MagazineController getInstance() {
+        return instance;
+    }
 }

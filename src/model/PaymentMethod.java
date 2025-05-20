@@ -27,12 +27,14 @@ public class PaymentMethod implements Serializable {
     public PaymentMethod(CreditCard card) {
         this.method = "Credit Card";
         this.card = card;
+        this.debit = null;
     }
 
     // Constructor for direct debit
     public PaymentMethod(DirectDebit debit) {
         this.method = "Direct Debit";
         this.debit = debit;
+        this.card = null;
     }
 
     // Factory method from string input (from user prompt)
@@ -68,11 +70,14 @@ public class PaymentMethod implements Serializable {
     @Override
     public String toString() {
         if (card != null) {
-            return card.toString();
-        } else if (debit != null) {
-            return debit.toString();
-        } else {
-            return method;
+            return "Credit Card: " + card.getCardNumber()
+                    + ", Expiry: " + card.getExpiryDate()
+                    + ", Holder: " + card.getCardHolderName();
         }
+        if (debit != null) {
+            return "Direct Debit: Account: " + debit.getAccountNumber()
+                    + ", BSB: " + debit.getBsb();
+        }
+        return "Unknown";
     }
 }

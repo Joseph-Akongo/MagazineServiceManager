@@ -57,7 +57,6 @@ public class Customer implements Serializable {
     }
     
     // updates the name with validation.
-     
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty.");
@@ -87,7 +86,11 @@ public class Customer implements Serializable {
         }
         this.supplements = new ArrayList<>(supplements); // defensive copy
     }
-
+    
+    @Override
+    public String toString() {
+        return name; // or return name + " (" + email + ")" if you want more detail
+    }
     
     // Returns customer-specific info (for GUI extra field).
     //  Can be overridden in subclasses.

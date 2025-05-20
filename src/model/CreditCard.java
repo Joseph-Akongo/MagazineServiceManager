@@ -88,8 +88,6 @@ public class CreditCard implements Serializable {
         return cardHolderName;
     }
 
-    
-
     // Override toString() for string representation when displaying the payment method
     @Override
     public String toString() {

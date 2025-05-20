@@ -10,13 +10,13 @@ import model.*;
 import service.MagazineService;
 import model.CreditCard;
 import model.DirectDebit;
+import util.InputValidator;
 
 public class EditCustomerController {
 
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private ListView<CheckBox> supplementList;
-
     @FXML private ComboBox<String> paymentMethodCombo;
     @FXML private TextField cardNumberField;
     @FXML private TextField expiryField;
@@ -33,7 +33,7 @@ public class EditCustomerController {
     @FXML private TextField contactEmailField;
 
     private Customer customer;
-    
+    private TreeItem<String> customerItem;
     
     @FXML
     private void initialize() {
@@ -41,8 +41,9 @@ public class EditCustomerController {
         paymentMethodCombo.setOnAction(e -> togglePaymentFields());
     }
     
-    public void setCustomer(Customer customer) {
+    public void setCustomer(Customer customer, TreeItem<String> customerItem) {
         this.customer = customer;
+        this.customerItem = customerItem;
 
         // Set basic fields
         nameField.setText(customer.getName());
@@ -151,11 +152,10 @@ public class EditCustomerController {
             List<Supplement> selected = supplementList.getItems().stream()
                 .filter(CheckBox::isSelected)
                 .map(cb -> MagazineService.findSupplementByName(cb.getText()))
-                .filter(s -> s != null)
-                .toList();
+                .filter(s -> s != null).toList();
             customer.setSupplements(selected);
 
-            // Associate: Update payer from combo box
+            // AssociateCustomer payer
             if (customer instanceof AssociateCustomer ac) {
                 String payerName = payerCombo.getValue();
                 Customer payer = MagazineService.findCustomerByName(payerName);
@@ -167,35 +167,63 @@ public class EditCustomerController {
                 }
             }
 
-            // PayingCustomer (and Enterprise): Update payment method
             if (customer instanceof PayingCustomer pc) {
+                System.out.println("Befor save: " + pc.getPaymentMethod());
                 String selectedMethod = paymentMethodCombo.getValue();
+
                 if ("Credit Card".equals(selectedMethod)) {
-                    String cardNum = cardNumberField.getText();
-                    String expiry = expiryField.getText();
-                    String holder = cardNameField.getText();
+                    String cardNum = cardNumberField.getText().trim();
+                    String expiry = expiryField.getText().trim();
+                    String holder = cardNameField.getText().trim();
+
+                    if (!InputValidator.isValidCreditCard(cardNum, expiry, holder)) {
+                        showAlert("Invalid Credit Card", "Card number must be 16 digits, expiry in MM/YY format, and name must not be empty.");
+                        return;
+                    }
+
                     pc.setPaymentMethod(new PaymentMethod(new CreditCard(cardNum, expiry, holder)));
+
                 } else if ("Direct Debit".equals(selectedMethod)) {
-                    int acc = Integer.parseInt(accountNumberField.getText());
-                    int bsb = Integer.parseInt(bsbField.getText());
+                    String accStr = accountNumberField.getText().trim();
+                    String bsbStr = bsbField.getText().trim();
+
+                    if (!InputValidator.isValidDirectDebit(accStr, bsbStr)) {
+                        showAlert("Invalid Direct Debit", "Account number must be exactly 8 digits, and BSB must be exactly 6 digits.");
+                        return;
+                    }
+
+                    int acc = Integer.parseInt(accStr);
+                    int bsb = Integer.parseInt(bsbStr);
+                    
                     pc.setPaymentMethod(new PaymentMethod(new DirectDebit(acc, bsb)));
+
+                } else {
+                    showAlert("Missing Payment Method", "Please select Credit Card or Direct Debit.");
+                    return;
                 }
+
+                System.out.println("After save: " + pc.getPaymentMethod());
+                System.out.println("Method object type: " + pc.getPaymentMethod().getMethod().getClass().getName());
             }
 
-            // EnterpriseCustomer: Update contact person
+            // EnterpriseCustomer contact
             if (customer instanceof EnterpriseCustomer ec) {
-                String name = contactNameField.getText();
-                String email = contactEmailField.getText();
-                ec.setContact(new EnterpriseCustomer.ContactPerson(name, email));
+                ec.setContact(new EnterpriseCustomer.ContactPerson(
+                    contactNameField.getText(),
+                    contactEmailField.getText()
+                ));
             }
 
-            // Close the window
+            // Update TreeView label
+            if (customerItem != null) {
+                customerItem.setValue(customer.getName());  // triggers UI label update
+            }
+
+            // Close
             ((Stage) nameField.getScene().getWindow()).close();
 
         } catch (NumberFormatException e) {
-            showAlert("Invalid Input", "Account number and BSB must be numeric.");
-        } catch (IllegalArgumentException e) {
-            showAlert("Input Error", e.getMessage());
+            showAlert("Input Error", "Account number and BSB must be numeric.");
         } catch (Exception e) {
             showAlert("Unexpected Error", e.getMessage());
             e.printStackTrace();

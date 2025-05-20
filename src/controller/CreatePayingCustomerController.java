@@ -67,34 +67,51 @@ public class CreatePayingCustomerController {
         String name = nameField.getText().trim();
         String email = emailField.getText().trim();
 
+        // Validate name & email
         InputValidator.isValidName(name);
         InputValidator.isValidEmail(email);
 
         PaymentMethod method;
-        if ("Credit Card".equals(paymentMethodBox.getValue())) {
+        String selectedMethod = paymentMethodBox.getValue();
+
+        if ("Credit Card".equals(selectedMethod)) {
             String cardNum = cardNumberField.getText().trim();
             String expiry = expiryField.getText().trim();
             String holder = holderNameField.getText().trim();
 
-            CreditCard card = new CreditCard(cardNum, expiry, holder);
-            if (card.checkCardValidity() == 0) {
-                showAlert("Invalid card", "Please check credit card details.");
+            if (!InputValidator.isValidCreditCard(cardNum, expiry, holder)) {
+                showAlert("Invalid Credit Card", "Ensure card number is 16 digits, expiry is MM/YY, and name is filled.");
                 return;
             }
 
+            CreditCard card = new CreditCard(cardNum, expiry, holder);
             method = new PaymentMethod(card);
-        } else {
-            try {
-                int bsb = Integer.parseInt(bsbField.getText().trim());
-                int acc = Integer.parseInt(accountNumberField.getText().trim());
-                DirectDebit debit = new DirectDebit(acc, bsb);
-                method = new PaymentMethod(debit);
-            } catch (Exception e) {
-                showAlert("Invalid direct debit", "BSB and Account must be valid numbers.");
+
+        } else if ("Direct Debit".equals(selectedMethod)) {
+            String accStr = accountNumberField.getText().trim();
+            String bsbStr = bsbField.getText().trim();
+
+            // Validate format before parsing
+            if (!InputValidator.isValidDirectDebit(accStr, bsbStr)) {
+                showAlert("Invalid Direct Debit", "Account number must be exactly 8 digits. BSB must be exactly 6 digits.");
                 return;
             }
+
+            try {
+                int acc = Integer.parseInt(accStr);
+                int bsb = Integer.parseInt(bsbStr);
+                method = new PaymentMethod(new DirectDebit(acc, bsb));
+            } catch (NumberFormatException e) {
+                showAlert("Invalid Direct Debit", "BSB and Account must be numeric.");
+                return;
+            }
+
+        } else {
+            showAlert("Missing Payment Method", "Please select either Credit Card or Direct Debit.");
+            return;
         }
 
+        // Create and populate customer
         PayingCustomer customer = new PayingCustomer(name, email, method);
 
         for (CheckBox cb : supplementCheckboxes) {

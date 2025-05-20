@@ -11,7 +11,6 @@ import model.Magazine;
 import service.HardCodedData;
 import service.MagazineService;
 import util.FileHelper;
-
 import java.io.File;
 import javafx.scene.control.Alert;
 

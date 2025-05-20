@@ -275,14 +275,13 @@ public class MagazineService {
     }
     
     public static Supplement findSupplementByName(String name) {
-    for (Supplement s : availableSupplements) {
-        if (s.getName().equals(name)) {
-            return s;
+        for (Supplement s : availableSupplements) {
+            if (s.getName().equals(name)) {
+                return s;
+            }
         }
+        return null;
     }
-    return null;
-}
-
 
     // Returns the total number of customers in the system for testing purposes
     public static int getCustomerCount() {

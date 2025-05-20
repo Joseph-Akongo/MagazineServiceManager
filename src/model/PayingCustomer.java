@@ -44,7 +44,7 @@ public class PayingCustomer extends Customer implements Serializable {
 
     // Setter for payment method with null check
     public void setPaymentMethod(PaymentMethod method) {
-        this.paymentMethod = paymentMethod;
+        this.paymentMethod = method;
     }
     
     @Override

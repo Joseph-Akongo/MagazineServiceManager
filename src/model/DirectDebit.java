@@ -34,7 +34,7 @@ public class DirectDebit implements Serializable {
 
     // Validation method for account number (1 to 8 digits)
     public int checkAccountNumber(int accountNumber) {
-        if (accountNumber <= 0 || accountNumber > 99999999) {
+        if (accountNumber <= 10000000 || accountNumber > 99999999) {
             System.out.println("Invalid account number. Please ensure it is a positive integer with up to 8 digits.");
             return -1;
         }
