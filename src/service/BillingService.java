@@ -8,6 +8,8 @@ package service;
  *          Includes utility for calculating the number of weeks in a given month.
  */
 import model.AssociateCustomer;
+import model.Customer;
+import model.EnterpriseCustomer;
 import model.PayingCustomer;
 import model.Supplement;
 
@@ -75,5 +77,30 @@ public class BillingService {
             default:
                 throw new IllegalArgumentException("Invalid month: " + month);
         }
+    }
+    
+    public static float getWeeklyCharge(Customer customer) {
+        float total = 0;
+
+        // Base magazine cost
+        if (MagazineService.getMagazine() != null) {
+            total += MagazineService.getMagazine().getPrice();
+        }
+
+        // Add supplement costs
+        for (Supplement s : customer.getSupplements()) {
+            total += s.getWeeklyCost();
+        }
+
+        // If Enterprise, multiply by number of copies
+        if (customer instanceof EnterpriseCustomer ec) {
+            total *= ec.getNumberOfCopies();
+        }
+
+        return total;
+    }
+
+    public static float getMonthlyCharge(Customer customer) {
+        return getWeeklyCharge(customer) * 4;  // Simplified monthly calculation
     }
 }

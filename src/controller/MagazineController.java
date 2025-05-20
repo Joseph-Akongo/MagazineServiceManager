@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -31,6 +32,8 @@ public class MagazineController {
     @FXML private Label footer;
     @FXML private Label payerLabelTitle;
     @FXML private Label numberOfCopiesLabel;
+    @FXML private StackPane mainContentPane;
+    @FXML private VBox detailsPane;
     @FXML private VBox payingBox;
     @FXML private VBox enterpriseBox;
     @FXML private MenuItem createPaying;
@@ -38,6 +41,8 @@ public class MagazineController {
     @FXML private MenuItem createEnterprise;
     @FXML private MenuItem editCustomer;
     @FXML private MenuItem loadFile;
+    
+    private Customer currentCustomer;
 
     @FXML
     public void initialize() {
@@ -46,6 +51,7 @@ public class MagazineController {
             if (newVal != null) {
                 Customer selectedCustomer = MagazineService.findCustomerByName(newVal.getValue());
                 if (selectedCustomer != null) {
+                    currentCustomer = selectedCustomer;
                     updateDetailView(selectedCustomer);
                 }
             }
@@ -277,6 +283,25 @@ public class MagazineController {
             footer.setText("Magazine saved: " + file.getName());
         } else {
             showAlert("Save Failed", "Could not save magazine to file.");
+        }
+    }
+
+    @FXML
+    private void handleBillingView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/BillingView.fxml"));
+            VBox billingPane = loader.load();
+            BillingController billingController = loader.getController();
+            billingController.setCustomer(currentCustomer, mainContentPane, detailsPane);
+
+            // Replace visible content
+            mainContentPane.getChildren().setAll(detailsPane, billingPane);
+            detailsPane.setVisible(false);
+            detailsPane.setManaged(false);
+            billingPane.setVisible(true);
+            billingPane.setManaged(true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
