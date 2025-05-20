@@ -81,7 +81,7 @@ public class CreateEnterpriseCustomerController {
                 String cardNum = cardNumberField.getText().trim();
                 String expiry = expiryField.getText().trim();
                 String holder = holderNameField.getText().trim();
-
+                
                 if (!InputValidator.isValidCreditCard(cardNum, expiry, holder)) {
                     showAlert("Invalid Credit Card", "Ensure card number is 16 digits, expiry is MM/YY, and name is filled.");
                     return;
@@ -120,6 +120,9 @@ public class CreateEnterpriseCustomerController {
                     ec.addSupplement((Supplement) cb.getUserData());
                 }
             }
+            
+            System.out.println("Selected method: " + paymentMethodBox.getValue());
+            System.out.println("Method before customer creation: " + method);
 
             // Add to service and close
             MagazineService.addCustomer(ec);

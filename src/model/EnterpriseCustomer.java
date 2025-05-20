@@ -13,8 +13,6 @@ import java.io.Serializable;
 // EnterpriseCustomer a specialized PayingCustomer who orders multiple copies for a company
 public class EnterpriseCustomer extends PayingCustomer implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    private PaymentMethod paymentMethod;
 
     // Inner static class to represent a point of contact for the enterprise
     public static class ContactPerson implements Serializable {
@@ -44,15 +42,17 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
     }
 
     // Each EnterpriseCustomer has a contact person
-    ContactPerson contact;
+    private ContactPerson contact;
 
     // Number of magazine copies to be delivered per week
     private int numberOfCopies;
 
     // Constructor initializes all enterprise-specific details
-    public EnterpriseCustomer(String name, String email, PaymentMethod paymentMethod,
-                              ContactPerson contact, int numberOfCopies) {
+    public EnterpriseCustomer(String name, String email, PaymentMethod paymentMethod, ContactPerson contact, int numberOfCopies) {
         super(name, email, paymentMethod);
+        if (paymentMethod== null) {
+            throw new IllegalArgumentException("EnterpriseCustomer must have a payment method.");
+        }
         this.contact = contact;
         this.numberOfCopies = numberOfCopies;
     }
@@ -67,7 +67,7 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
     }
 
     public PaymentMethod getPaymentMethod(){
-        return paymentMethod;
+        return super.getPaymentMethod();
     }
     
     public void setContact(ContactPerson contact) {
@@ -76,14 +76,6 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
 
     @Override
     public String getSpecificInfo() {
-        return paymentMethod != null ? paymentMethod.toString() : "";
+        return getPaymentMethod() != null ? getPaymentMethod().toString() : "";
     }
-
-    @Override
-    public void setSpecificInfo(String info) {
-        if (info != null && !info.isEmpty()) {
-            this.paymentMethod = new PaymentMethod(info);  // probs not needed
-        }
-    }
-    
 }

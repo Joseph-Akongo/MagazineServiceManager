@@ -87,31 +87,34 @@ public class EditCustomerController {
             payingBox.setVisible(true);
             payingBox.setManaged(true);
 
-            // Downcast methods 
             PaymentMethod method = pc.getPaymentMethod();
-            Object actualMethod = method.getMethod();
+
+            if (method == null) {
+                paymentMethodCombo.setValue(null);
+                showAlert("Missing Payment Method", "This customer has no payment method set.");
+                togglePaymentFields();
+                return;
+            }
+
             CreditCard creditCard = method.getCard();
             DirectDebit directDebit = method.getDebit();
-            
-            if (creditCard instanceof CreditCard) {
+
+            if (creditCard != null) {
                 paymentMethodCombo.setValue("Credit Card");
                 cardNumberField.setText(creditCard.getCardNumber());
                 expiryField.setText(creditCard.getExpiryDate());
                 cardNameField.setText(creditCard.getCardHolderName());
 
-            } else if (directDebit instanceof DirectDebit dd) {
+            } else if (directDebit != null) {
                 paymentMethodCombo.setValue("Direct Debit");
-                accountNumberField.setText(String.valueOf(dd.getAccountNumber()));
+                accountNumberField.setText(String.valueOf(directDebit.getAccountNumber()));
                 bsbField.setText(String.valueOf(directDebit.getBsb()));
-            } else if (actualMethod instanceof String str) {
-                // Known legacy or invalid data fallback
-                paymentMethodCombo.setValue(null);
-                showAlert("Unsupported Payment Method", "Expected a CreditCard or DirectDebit, but got a raw string: " + str);
+
             } else {
                 paymentMethodCombo.setValue(null);
-                showAlert("Unknown Payment Method", "Unrecognized type: " + method.getClass().getSimpleName());
+                showAlert("Unknown Payment Method", "The payment method exists but is unrecognized.");
             }
-            // Show the correct fields based on type
+
             togglePaymentFields();
         }
 

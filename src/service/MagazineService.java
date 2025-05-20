@@ -15,7 +15,6 @@ import model.Supplement;
 import model.Magazine;
 import java.util.ArrayList;
 import java.util.List;
-import model.EmailService;
 import model.PaymentMethod;
 
 // Controller class.

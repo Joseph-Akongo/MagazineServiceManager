@@ -1,6 +1,9 @@
-package model;
+package service;
 
 import java.io.Serializable;
+import model.Customer;
+import model.EnterpriseCustomer;
+import model.Supplement;
 
 public class EmailService implements Serializable {
     

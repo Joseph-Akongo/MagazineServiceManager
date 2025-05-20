@@ -90,22 +90,21 @@ public class CreatePayingCustomerController {
         } else if ("Direct Debit".equals(selectedMethod)) {
             String accStr = accountNumberField.getText().trim();
             String bsbStr = bsbField.getText().trim();
+            
+            System.out.println("accStr: '" + accStr + "', bsbStr: '" + bsbStr + "'");
+            System.out.println("accStr valid? " + accStr.matches("\\d{8}"));
+            System.out.println("bsbStr valid? " + bsbStr.matches("\\d{6}"));
 
             // Validate format before parsing
             if (!InputValidator.isValidDirectDebit(accStr, bsbStr)) {
-                showAlert("Invalid Direct Debit", "Account number must be exactly 8 digits. BSB must be exactly 6 digits.");
+                showAlert("Invalid Direct Debit", "Account number must be exactly 8 digits, and BSB must be exactly 6 digits.");
                 return;
             }
-
-            try {
-                int acc = Integer.parseInt(accStr);
-                int bsb = Integer.parseInt(bsbStr);
-                method = new PaymentMethod(new DirectDebit(acc, bsb));
-            } catch (NumberFormatException e) {
-                showAlert("Invalid Direct Debit", "BSB and Account must be numeric.");
-                return;
-            }
-
+            
+            int acc = Integer.parseInt(accStr);
+            int bsb = Integer.parseInt(bsbStr);
+            method = new PaymentMethod(new DirectDebit(acc, bsb));
+            
         } else {
             showAlert("Missing Payment Method", "Please select either Credit Card or Direct Debit.");
             return;
