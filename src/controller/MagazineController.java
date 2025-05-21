@@ -32,9 +32,14 @@ public class MagazineController {
     @FXML private Label footer;
     @FXML private Label payerLabelTitle;
     @FXML private Label numberOfCopiesLabel;
+    @FXML private Label listOfAssociates;
     @FXML private StackPane mainContentPane;
+    @FXML private VBox supplementDetailBox;
+    @FXML private Label supplementNameLabel;
+    @FXML private Label supplementCostLabel;
     @FXML private VBox detailsPane;
     @FXML private VBox payingBox;
+    @FXML private VBox associatesBox;
     @FXML private VBox enterpriseBox;
     @FXML private MenuItem createPaying;
     @FXML private MenuItem createAssociate;
@@ -48,14 +53,36 @@ public class MagazineController {
     public void initialize() {
         loadTreeData();
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                Customer selectedCustomer = MagazineService.findCustomerByName(newVal.getValue());
-                if (selectedCustomer != null) {
-                    currentCustomer = selectedCustomer;
-                    updateDetailView(selectedCustomer);
-                }
+        if (newVal != null) {
+            String selectedName = newVal.getValue();
+
+            Customer selectedCustomer = MagazineService.findCustomerByName(selectedName);
+            Supplement selectedSupplement = MagazineService.findSupplementByName(selectedName);
+
+            if (selectedCustomer != null) {
+                // Hide supplement panel
+                supplementDetailBox.setVisible(false);
+                supplementDetailBox.setManaged(false);
+
+                // Show customer panel
+                detailsPane.setVisible(true);
+                detailsPane.setManaged(true);
+
+                currentCustomer = selectedCustomer;
+                updateDetailView(currentCustomer);
+            } else if (selectedSupplement != null) {
+                // Hide customer panel
+                detailsPane.setVisible(false);
+                detailsPane.setManaged(false);
+
+                // Show supplement panel
+                supplementDetailBox.setVisible(true);
+                supplementDetailBox.setManaged(true);
+
+                updateSupplementDetailView(selectedSupplement);
             }
-        });
+        }
+    });
         
         createPaying.setOnAction(e -> showDialog("CreatePayingCustomerView.fxml"));
         createAssociate.setOnAction(e -> showDialog("CreateAssociateCustomerView.fxml"));
@@ -64,7 +91,7 @@ public class MagazineController {
         editCustomer.setOnAction(e -> handleEdit());
     }
 
-    private void updateDetailView(Customer customer) {
+    public void updateDetailView(Customer customer) {
         // Reset visibility
         payerLabel.setVisible(false);
         payerLabel.setManaged(false);
@@ -74,6 +101,8 @@ public class MagazineController {
         payingBox.setManaged(false);
         enterpriseBox.setVisible(false);
         enterpriseBox.setManaged(false);
+        associatesBox.setVisible(false);
+        associatesBox.setManaged(false);
 
         // Common
         nameLabel.setText(customer.getName());
@@ -89,14 +118,28 @@ public class MagazineController {
             payerLabelTitle.setManaged(true);
         }
 
-        // PayingCustomer (but not Enterprise)
-        if (customer instanceof PayingCustomer pc && !(customer instanceof EnterpriseCustomer)) {
+        // Determine if the customer is a non-associate PayingCustomer
+        PayingCustomer pc = (customer instanceof PayingCustomer) ? (PayingCustomer) customer : null;
+        if (pc != null && !(customer instanceof AssociateCustomer)) {
+            associatesBox.setVisible(true);
+            associatesBox.setManaged(true);
+
+            if (pc.getAssociates().isEmpty()) {
+                listOfAssociates.setText("None");
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (AssociateCustomer ac : pc.getAssociates()) {
+                    sb.append("- ").append(ac.getName()).append(" (").append(ac.getEmail()).append(")\n");
+                }
+                listOfAssociates.setText(sb.toString().trim());
+            }
+
             payingBox.setVisible(true);
             payingBox.setManaged(true);
             paymentMethodLabel.setText(pc.getPaymentMethod() != null ? pc.getPaymentMethod().toString() : "N/A");
         }
 
-        // EnterpriseCustomer: show contact, copies, and payment
+        // EnterpriseCustomer: show contact and copies
         if (customer instanceof EnterpriseCustomer ec) {
             enterpriseBox.setVisible(true);
             enterpriseBox.setManaged(true);
@@ -106,11 +149,6 @@ public class MagazineController {
                 : "No contact person");
 
             numberOfCopiesLabel.setText(String.valueOf(ec.getNumberOfCopies()));
-
-            payingBox.setVisible(true);
-            payingBox.setManaged(true);
-            paymentMethodLabel.setText(ec.getPaymentMethod() != null ? ec.getPaymentMethod().toString() : "N/A");
-            System.out.println(ec.getPaymentMethod());
         }
 
         // Supplements
@@ -132,6 +170,16 @@ public class MagazineController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    
+    private void updateSupplementDetailView(Supplement s) {
+        detailsPane.setVisible(false);
+        detailsPane.setManaged(false);
+        supplementDetailBox.setVisible(true);
+        supplementDetailBox.setManaged(true);
+
+        supplementNameLabel.setText(s.getName());
+        supplementCostLabel.setText("$" + s.getWeeklyCost());
     }
 
     private void handleEdit() {
@@ -162,7 +210,11 @@ public class MagazineController {
             stage.showAndWait();  // Wait until the edit window is closed
 
             // Refresh the detail view with the updated data
-            updateDetailView(selectedCustomer);
+            loadTreeData();
+            
+            // Always reload the selected customer from service to get fresh references
+            Customer updated = MagazineService.findCustomerByName(selectedCustomer.getName());
+            updateDetailView(updated);
 
             // Print updated info for verification
             System.out.print("Updated customer: " + selectedCustomer.getName() + ", Email: " + 
@@ -182,6 +234,41 @@ public class MagazineController {
     }
     
     @FXML
+    private void handleEditSupplement() {
+        TreeItem<String> selected = treeView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("No Selection", "Select a supplement to edit.");
+            return;
+        }
+
+        Supplement supplement = MagazineService.findSupplementByName(selected.getValue());
+        if (supplement == null) {
+            showAlert("Invalid Selection", "Selected item is not a supplement.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditSupplementView.fxml"));
+            Parent root = loader.load();
+
+            EditSupplementController controller = loader.getController();
+            controller.setSupplement(supplement);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Supplement");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            // After editing
+            updateSupplementDetailView(supplement);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open supplement editor.");
+        }
+    }
+    
+    @FXML
     private void handleCreateSupplement() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CreateSupplementView.fxml"));
@@ -193,8 +280,10 @@ public class MagazineController {
             stage.initOwner(treeView.getScene().getWindow()); // or use any visible node
             stage.showAndWait();
 
-            // Optional: refresh data if supplements affect the view
+            // Refresh data if supplements affect the view
             loadTreeData();
+            
+            updateDetailView(currentCustomer);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,11 +292,24 @@ public class MagazineController {
     }
 
     private void loadTreeData() {
-        TreeItem<String> root = new TreeItem<>("Customers");
+        treeView.setRoot(null);  // Clear existing tree
+
+        // Root node named after the magazine
+        String magazineName = (MagazineService.getMagazine() != null)
+            ? MagazineService.getMagazine().getName()
+            : "Magazine Service";
+        TreeItem<String> root = new TreeItem<>(magazineName);
+
+        // Main categories under root
+        TreeItem<String> customersNode = new TreeItem<>("Customers");
+        TreeItem<String> supplementsNode = new TreeItem<>("Supplements");
+
+        // Sub-categories under "Customers"
         TreeItem<String> payingNode = new TreeItem<>("Paying Customers");
         TreeItem<String> associateNode = new TreeItem<>("Associate Customers");
         TreeItem<String> enterpriseNode = new TreeItem<>("Enterprise Customers");
 
+        // Populate customers
         for (Customer c : MagazineService.getCustomers()) {
             TreeItem<String> item = new TreeItem<>(c.getName());
             if (c instanceof EnterpriseCustomer) {
@@ -219,7 +321,15 @@ public class MagazineController {
             }
         }
 
-        root.getChildren().addAll(payingNode, associateNode, enterpriseNode);
+        // Populate supplements
+        for (Supplement s : MagazineService.getAvailableSupplements()) {
+            TreeItem<String> item = new TreeItem<>(s.getName());
+            supplementsNode.getChildren().add(item);
+        }
+
+        // Combine and set root
+        customersNode.getChildren().addAll(payingNode, associateNode, enterpriseNode);
+        root.getChildren().addAll(customersNode, supplementsNode);
         root.setExpanded(true);
         treeView.setRoot(root);
     }

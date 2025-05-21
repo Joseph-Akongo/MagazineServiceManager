@@ -55,6 +55,7 @@ public class CreateAssociateCustomerController {
         }
 
         AssociateCustomer customer = new AssociateCustomer(name, email, payer);
+        payer.addAssociate(customer);
 
         for (CheckBox cb : supplementCheckboxes) {
             if (cb.isSelected()) {
@@ -63,6 +64,8 @@ public class CreateAssociateCustomerController {
         }
 
         MagazineService.addCustomer(customer);
+        MagazineController.getInstance().updateDetailView(payer);
+
         closeWindow();
     }
 

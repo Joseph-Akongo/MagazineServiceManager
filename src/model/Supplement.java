@@ -52,4 +52,12 @@ public class Supplement implements Serializable {
     public String toString() {
         return name + " ($" + String.format("%.2f", weeklyCost) + "/week)";
     }
+
+    public void setName(String name) {
+       this.name = name;
+    }
+
+    public void setWeeklyCost(double weeklyCost) {
+        this.weeklyCost = weeklyCost;
+    }
 }

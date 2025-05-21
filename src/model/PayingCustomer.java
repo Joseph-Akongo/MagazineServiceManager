@@ -51,10 +51,16 @@ public class PayingCustomer extends Customer implements Serializable {
     public String getSpecificInfo() {
         return paymentMethod != null ? paymentMethod.toString() : "";
     }
+    
+    public void removeAssociate(AssociateCustomer ac) {
+        if (ac != null) {
+            associates.remove(ac);
+        }
+    }
 
     public void setSpecificInfo(String info) {
         if (info != null && !info.isEmpty()) {
-            this.paymentMethod = new PaymentMethod(info);  // You may need to adjust this if PaymentMethod is an object
+            this.paymentMethod = new PaymentMethod(info); 
         }
     }
 }

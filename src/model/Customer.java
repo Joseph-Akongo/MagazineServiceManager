@@ -69,7 +69,6 @@ public class Customer implements Serializable {
 
     
     // updates the email with validation.
-     
     public void setEmail(String email) {
         if (email == null || email.isEmpty()) {
             throw new IllegalArgumentException("Email cannot be empty.");

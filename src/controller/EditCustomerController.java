@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.control.ButtonType;
 import model.*;
 import service.MagazineService;
 import model.CreditCard;
@@ -40,6 +41,7 @@ public class EditCustomerController {
         paymentMethodCombo.setItems(FXCollections.observableArrayList("Credit Card", "Direct Debit"));
         paymentMethodCombo.setOnAction(e -> togglePaymentFields());
     }
+    
     
     public void setCustomer(Customer customer, TreeItem<String> customerItem) {
         this.customer = customer;
@@ -163,7 +165,15 @@ public class EditCustomerController {
                 String payerName = payerCombo.getValue();
                 Customer payer = MagazineService.findCustomerByName(payerName);
                 if (payer instanceof PayingCustomer pc) {
-                    ac.setPayer(pc);
+                    PayingCustomer oldPayer = ac.getPayer();
+                if (oldPayer != null) {
+                    oldPayer.removeAssociate(ac);
+                }
+
+                ac.setPayer(pc);
+                pc.addAssociate(ac);
+
+                    MagazineController.getInstance().updateDetailView(pc);
                 } else {
                     showAlert("Invalid Payer", "Selected payer is not a paying customer.");
                     return;
@@ -222,6 +232,14 @@ public class EditCustomerController {
                 customerItem.setValue(customer.getName());  // triggers UI label update
             }
 
+            // Refresh tree and right panel
+            MagazineController.getInstance().refreshTreeView();
+
+            // Close
+            ((Stage) nameField.getScene().getWindow()).close();
+
+
+
             // Close
             ((Stage) nameField.getScene().getWindow()).close();
 
@@ -231,6 +249,23 @@ public class EditCustomerController {
             showAlert("Unexpected Error", e.getMessage());
             e.printStackTrace();
         }
+    }
+    
+    public void handleDelete(){
+        String name = customer.toString();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete (this cannot be undone)?",
+        ButtonType.YES, ButtonType.CANCEL);
+        
+        
+        alert.showAndWait().ifPresent(buttonType ->{
+            if(buttonType == ButtonType.YES){
+                MagazineService.removeCustomer(name);
+            }
+            
+            // Close Stage
+            ((Stage) nameField.getScene().getWindow()).close();
+            
+        });
     }
     
     private void showAlert(String title, String message) {

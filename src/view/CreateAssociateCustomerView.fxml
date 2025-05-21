@@ -3,8 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.CreateAssociateCustomerController"
-      spacing="10" alignment="TOP_LEFT" style="-fx-padding: 15;">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.CreateAssociateCustomerController" spacing="10" alignment="TOP_LEFT" style="-fx-padding: 15;">
 
     <Label text="Create Associate Customer" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
 
