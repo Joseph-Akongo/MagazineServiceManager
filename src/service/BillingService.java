@@ -1,98 +1,151 @@
 package service;
 
-/**
- * Author: Joseph Akongo
- * Student Number: 33255426
- * File: BillingService.java
- * Purpose: Responsible for generating monthly billing summaries for paying customers and their associates.
- *          Includes utility for calculating the number of weeks in a given month.
- */
-import model.AssociateCustomer;
-import model.Customer;
-import model.EnterpriseCustomer;
-import model.PayingCustomer;
-import model.Supplement;
+import model.*;
 
-// BillingService single responsibility for generating billing summaries
+import java.time.YearMonth;
+
 public class BillingService {
 
-    // Generates monthly bill for a PayingCustomer and their associates
-    public static String generateMonthlyBilling(PayingCustomer customer, double magCost, int month, int year) {
-        // Month names for display
+    public static String generateWeeklyBilling(Customer customer) {
+        float magCost = MagazineService.getMagCost();
+        StringBuilder summary = new StringBuilder();
+
+        if (customer instanceof PayingCustomer pc) {
+            float total = magCost;
+            summary.append("Magazine Cost: $").append(String.format("%.2f", magCost)).append("\n");
+
+            for (Supplement s : pc.getSupplements()) {
+                summary.append("Supplement - ").append(s.getName())
+                       .append(": $").append(String.format("%.2f", s.getWeeklyCost())).append("\n");
+                total += s.getWeeklyCost();
+            }
+
+            summary.append("- You: $").append(String.format("%.2f", total)).append("\n");
+
+            for (AssociateCustomer ac : pc.getAssociates()) {
+                float acTotal = 0;
+                for (Supplement s : ac.getSupplements()) {
+                    summary.append("  ").append(ac.getName()).append(" Supplement - ").append(s.getName())
+                           .append(": $").append(String.format("%.2f", s.getWeeklyCost())).append("\n");
+                    acTotal += s.getWeeklyCost();
+                }
+                summary.append("- ").append(ac.getName()).append(" (Supplements Only): $")
+                       .append(String.format("%.2f", acTotal)).append("\n");
+            }
+
+        } else if (customer instanceof EnterpriseCustomer ec) {
+            int copies = ec.getNumberOfCopies();
+            float supplementTotal = 0;
+
+            summary.append("Magazine Cost: $").append(String.format("%.2f", magCost)).append("\n");
+            summary.append("Number of copies: ").append(copies).append("\n");
+
+            for (Supplement s : ec.getSupplements()) {
+                summary.append("Supplement - ").append(s.getName())
+                       .append(": $").append(String.format("%.2f", s.getWeeklyCost())).append("\n");
+                supplementTotal += s.getWeeklyCost();
+            }
+
+            float total = (magCost + supplementTotal) * copies;
+            summary.append("Total Weekly Cost: $").append(String.format("%.2f", total)).append("\n");
+
+        } else {
+            float total = magCost;
+            summary.append("Magazine Cost: $").append(String.format("%.2f", magCost)).append("\n");
+
+            for (Supplement s : customer.getSupplements()) {
+                summary.append("Supplement - ").append(s.getName())
+                       .append(": $").append(String.format("%.2f", s.getWeeklyCost())).append("\n");
+                total += s.getWeeklyCost();
+            }
+
+            summary.append("- ").append(customer.getName()).append(": $").append(String.format("%.2f", total)).append("\n");
+        }
+
+        return summary.toString();
+    }
+
+    public static String generateMonthlyBilling(Customer customer, int month, int year) {
+        float magCost = MagazineService.getMagCost();
+        int weeks = (int) Math.ceil(getDaysInMonth(month, year) / 7.0);
+
         String[] monthNames = {
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         };
 
-        // How many weeks are in the given month
-        int daysInMonth = getDaysInMonth(month, year);
-        int weeks = (int) Math.ceil(daysInMonth / 7.0);
+        StringBuilder bill = new StringBuilder("Monthly Billing for ")
+            .append(customer.getName()).append(" (").append(monthNames[month - 1])
+            .append(") ").append(year).append("\n");
 
-        // Start constructing the bill
-        StringBuilder bill = new StringBuilder("Monthly Billing for " + customer.getName() + 
-                " (" + monthNames[month - 1] + ") " + year + "\n");
+        double total = 0;
 
-        // Base cost for the paying customer
-        double total = magCost * weeks;
+        if (customer instanceof PayingCustomer pc) {
+            double custTotal = magCost * weeks;
+            bill.append("Magazine Cost: $").append(String.format("%.2f", magCost)).append("\n");
 
-        // Add supplement costs
-        for (Supplement s : customer.getSupplements())
-            total += s.getWeeklyCost() * weeks;
+            for (Supplement s : pc.getSupplements()) {
+                bill.append("Supplement - ").append(s.getName())
+                    .append(": $").append(String.format("%.2f", s.getWeeklyCost() * weeks)).append("\n");
+                custTotal += s.getWeeklyCost() * weeks;
+            }
 
-        // Add line for the paying customer
-        bill.append("- You: $" + total + "\n");
+            bill.append("- You: $").append(String.format("%.2f", custTotal)).append("\n");
+            total += custTotal;
 
-        // Loop associate customers and calculate individual charges
-        for (AssociateCustomer ac : customer.getAssociates()) {
-            double acTotal = magCost * weeks;
-            for (Supplement s : ac.getSupplements())
-                acTotal += s.getWeeklyCost() * weeks;
+            for (AssociateCustomer ac : pc.getAssociates()) {
+                double acTotal = 0;
+                for (Supplement s : ac.getSupplements()) {
+                    bill.append("  ").append(ac.getName()).append(" Supplement - ").append(s.getName())
+                        .append(": $").append(String.format("%.2f", s.getWeeklyCost() * weeks)).append("\n");
+                    acTotal += s.getWeeklyCost() * weeks;
+                }
 
-            // Add line for associate
-            bill.append("- " + ac.getName() + ": $" + acTotal + "\n");
+                bill.append("- ").append(ac.getName()).append(": $").append(String.format("%.2f", acTotal)).append("\n");
+                total += acTotal;
+            }
 
-            // Add to total charge
-            total += acTotal;
+        } else if (customer instanceof EnterpriseCustomer ec) {
+            int copies = ec.getNumberOfCopies();
+            double supplementTotal = ec.getSupplements().stream().mapToDouble(Supplement::getWeeklyCost).sum();
+
+            bill.append("Magazine Cost: $").append(String.format("%.2f", magCost)).append("\n");
+            bill.append("Number of copies: ").append(copies).append("\n");
+
+            for (Supplement s : ec.getSupplements()) {
+                bill.append("Supplement - ").append(s.getName())
+                    .append(": $").append(String.format("%.2f", s.getWeeklyCost())).append("\n");
+            }
+
+            double custTotal = (magCost + supplementTotal) * copies * weeks;
+            bill.append("- ").append(ec.getName()).append(": $").append(String.format("%.2f", custTotal)).append("\n");
+            total = custTotal;
+
+        } else {
+            double custTotal = magCost * weeks;
+            bill.append("Magazine Cost: $").append(String.format("%.2f", magCost)).append("\n");
+
+            for (Supplement s : customer.getSupplements()) {
+                bill.append("Supplement - ").append(s.getName())
+                    .append(": $").append(String.format("%.2f", s.getWeeklyCost() * weeks)).append("\n");
+                custTotal += s.getWeeklyCost() * weeks;
+            }
+
+            bill.append("- ").append(customer.getName()).append(": $").append(String.format("%.2f", custTotal)).append("\n");
+            total = custTotal;
         }
 
-        // Add total for the entire account
-        bill.append("Total Monthly Charges: $" + total + "\n");
-
-        return bill.toString(); // Return final bill
+        bill.append("Total Monthly Charges: $").append(String.format("%.2f", total)).append("\n");
+        return bill.toString();
     }
 
-    // Utility method to determine how many days are in a given month (handles leap years)
-    private static int getDaysInMonth(int month, int year) {
-        switch (month) {
-            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-                return 31;
-            case 4: case 6: case 9: case 11:
-                return 30;
-            case 2:
-                // Leap year logic
-                if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
-                    return 29;
-                else
-                    return 28;
-            default:
-                throw new IllegalArgumentException("Invalid month: " + month);
-        }
-    }
-    
     public static float getWeeklyCharge(Customer customer) {
-        float total = 0;
+        float total = MagazineService.getMagCost();
 
-        // Base magazine cost
-        if (MagazineService.getMagazine() != null) {
-            total += MagazineService.getMagazine().getPrice();
-        }
-
-        // Add supplement costs
         for (Supplement s : customer.getSupplements()) {
             total += s.getWeeklyCost();
         }
 
-        // If Enterprise, multiply by number of copies
         if (customer instanceof EnterpriseCustomer ec) {
             total *= ec.getNumberOfCopies();
         }
@@ -100,7 +153,7 @@ public class BillingService {
         return total;
     }
 
-    public static float getMonthlyCharge(Customer customer) {
-        return getWeeklyCharge(customer) * 4;  // Simplified monthly calculation
+    private static int getDaysInMonth(int month, int year) {
+        return YearMonth.of(year, month).lengthOfMonth();
     }
 }

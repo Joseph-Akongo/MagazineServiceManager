@@ -19,7 +19,6 @@ import model.PaymentMethod;
 
 // Controller class.
 public class MagazineService {
-    private static final double magCost = 5.0;
     private static List<Magazine> magazines = new ArrayList<>();
 
     // Storage for all customer types (Paying, Associate, Enterprise)
@@ -61,6 +60,7 @@ public class MagazineService {
 
     // Send weekly emails to all customers for a given number of weeks
     public static void weeklyEmails(int weeks) {
+        double magCost = MagazineService.getMagCost();
         if (customers.isEmpty()) {
             System.out.println("No customers to send emails to.");
             return;
@@ -73,7 +73,6 @@ public class MagazineService {
             }
         }
     }
-    
 
     // Generate monthly billing summaries for paying customers
     public static void monthlyBills(int month) {
@@ -104,7 +103,7 @@ public class MagazineService {
             if (c instanceof PayingCustomer) {
                 PayingCustomer pc = (PayingCustomer) c;
                 System.out.println("Payment method for " + pc.getName() + ": " + pc.getPaymentMethod());
-                System.out.println(BillingService.generateMonthlyBilling(pc, magCost, month, currentYear));
+                System.out.println(BillingService.generateMonthlyBilling(pc, month, currentYear));
             }
         }
     }
@@ -158,6 +157,13 @@ public class MagazineService {
             }
         }
         System.out.println("Customer not found.");
+    }
+    
+    public static void removeSupplement(Supplement s) {
+        availableSupplements.remove(s);
+        for (Customer c : customers) {
+            c.getSupplements().removeIf(existing -> existing.getName().equalsIgnoreCase(s.getName()));
+        }
     }
 
     // Add an associate customer under a paying customer
@@ -319,6 +325,11 @@ public class MagazineService {
     
     public static Magazine getMagazine() {
         return magazines.isEmpty() ? null : magazines.get(0);
+    }
+    
+    public static float getMagCost() {
+        Magazine mag = getMagazine();
+        return (mag != null) ? mag.getPrice() : 0f;
     }
 
     public static void clearMagazines() {

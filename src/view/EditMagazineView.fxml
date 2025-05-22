@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.EditMagazineController" spacing="10" style="-fx-padding: 20;">
+    <Label text="Edit Magazine" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <TextField fx:id="nameField" promptText="Magazine Name"/>
+    <TextField fx:id="priceField" promptText="Price (e.g. 5.99)"/>
+    <Button text="Save" onAction="#handleSave"/>
+</VBox>

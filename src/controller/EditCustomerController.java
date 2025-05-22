@@ -263,8 +263,7 @@ public class EditCustomerController {
             }
             
             // Close Stage
-            ((Stage) nameField.getScene().getWindow()).close();
-            
+            ((Stage) nameField.getScene().getWindow()).close();            
         });
     }
     

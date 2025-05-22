@@ -3,16 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="billingRoot" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="controller.BillingController"
-      alignment="TOP_LEFT" spacing="10"
-      visible="false" managed="false"
-      style="-fx-padding: 20;">
+<VBox fx:id="billingRoot" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.BillingController"
+      spacing="10" style="-fx-padding: 20;" visible="false" managed="false">
+    
+    <Label fx:id="customerNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
 
-    <Label text="Billing Information" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
-    <Label fx:id="customerNameLabel" />
-    <Label fx:id="weeklyChargeLabel" />
-    <Label fx:id="monthlyChargeLabel" />
+    <Label text="Weekly Billing Summary:" />
+    <TextArea fx:id="weeklyBillingArea" wrapText="true" editable="false" prefHeight="200"/>
 
-    <Button text="Back to Details" onAction="#handleBack" />
+    <Label text="Monthly Billing Summary:" />
+    <ComboBox fx:id="monthComboBox" promptText="Select Month" />
+    <TextArea fx:id="monthlyBillingArea" wrapText="true" editable="false" prefHeight="150"/>
+
+    <Button text="Back" onAction="#handleBack" />
 </VBox>

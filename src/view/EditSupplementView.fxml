@@ -21,4 +21,5 @@
     </HBox>
 
     <Button text="Create" onAction="#handleSave"/>
+    <Button text="Delete" onAction="#handleDelete" />
 </VBox>

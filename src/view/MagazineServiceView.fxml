@@ -29,6 +29,7 @@
                     <items>
                         <MenuItem fx:id="editCustomer" text="Edit Selected Customer"/>
                         <MenuItem fx:id="editSupplement" text="Edit Selected Supplement" onAction="#handleEditSupplement"/>
+                        <MenuItem fx:id="editMagazine" text="Edit Magazine" onAction="#handleEditMagazine"/>
                     </items>
                 </Menu>
             </menus>
