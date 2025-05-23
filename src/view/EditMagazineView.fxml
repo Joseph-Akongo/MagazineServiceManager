@@ -2,9 +2,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.EditMagazineController" spacing="10" style="-fx-padding: 20;">
+<!--
+    Author: Joseph Akongo
+    File: EditMagazineView.fxml
+    Purpose: FXML layout for editing the magazine's name and price.
+-->
+
+<!-- Vertical layout container for magazine edit form -->
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.EditMagazineController"
+      spacing="10" style="-fx-padding: 20;">
+
+    <!-- Form title -->
     <Label text="Edit Magazine" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- Input for magazine name -->
     <TextField fx:id="nameField" promptText="Magazine Name"/>
+
+    <!-- Input for magazine price -->
     <TextField fx:id="priceField" promptText="Price (e.g. 5.99)"/>
+
+    <!-- Save button triggers handleSave() in controller -->
     <Button text="Save" onAction="#handleSave"/>
 </VBox>

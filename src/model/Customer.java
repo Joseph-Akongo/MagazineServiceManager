@@ -1,5 +1,3 @@
-package model;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -7,6 +5,8 @@ package model;
  * Purpose: Defines a generic magazine customer with name, email, and a list of subscribed supplements.
  *          This class serves as the base for more specific customer types like PayingCustomer and AssociateCustomer.
  */
+
+package model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ public class Customer implements Serializable {
     private String email;
     private List<Supplement> supplements = new ArrayList<>();
 
+    // Constructor with input validation
     public Customer(String name, String email) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty.");
@@ -89,12 +90,5 @@ public class Customer implements Serializable {
     @Override
     public String toString() {
         return name; // or return name + " (" + email + ")" if you want more detail
-    }
-    
-    // Returns customer-specific info (for GUI extra field).
-    //  Can be overridden in subclasses.
-
-    public void setSpecificInfo(String info) {
-        // Do nothing — subclasses can override.
     }
 }

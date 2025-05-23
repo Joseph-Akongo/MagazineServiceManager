@@ -1,3 +1,12 @@
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: CreateMagazineController.java
+ * Purpose: Handles user input for creating a new Magazine instance.
+ *          Validates inputs, sets up the MagazineService, prompts the user to save to file,
+ *          and opens the main Magazine Service Manager UI upon successful creation.
+ */
+
 package controller;
 
 import javafx.fxml.FXML;
@@ -16,15 +25,17 @@ import java.io.File;
 
 public class CreateMagazineController {
 
-    @FXML private TextField magazineName;
-    @FXML private TextField magazinePrice;
+    @FXML private TextField magazineName;  
+    @FXML private TextField magazinePrice; 
 
+    // Create Button, creates the magazine, saves to file, and launches the main app view.
     @FXML
     private void handleCreate() {
         try {
             String name = magazineName.getText().trim();
             String price = magazinePrice.getText().trim();
 
+            // Ensure both fields are filled
             if (name.isEmpty() || price.isEmpty()) {
                 showAlert("Input Error", "Please fill in all fields.");
                 return;
@@ -32,6 +43,7 @@ public class CreateMagazineController {
 
             float fPrice;
             try {
+                // Try converting price to float and check it's non-negative
                 fPrice = Float.parseFloat(price);
                 if (fPrice < 0) {
                     showAlert("Input Error", "Price must be a positive number.");
@@ -42,23 +54,28 @@ public class CreateMagazineController {
                 return;
             }
 
+            // Create Magazine object and register it with the service
             Magazine magazine = new Magazine(name, fPrice);
             MagazineService.setMagazine(magazine);
 
+            // Prompt user to save magazine to a .dat file
             FileChooser fileChooser = FileHelper.getDatFileChooser("Save Magazine File", true);
-            fileChooser.setInitialFileName(name.replaceAll("\s+", "_") + ".dat");
+            fileChooser.setInitialFileName(name.replaceAll("\\s+", "_") + ".dat");
             File file = fileChooser.showSaveDialog(magazineName.getScene().getWindow());
 
+            // Handle cancellation
             if (file == null) {
                 showAlert("Cancelled", "Save operation was cancelled.");
                 return;
             }
 
+            // Attempt to save the magazine to the chosen file
             if (!FileHelper.saveMagazineToFile(file)) {
                 showAlert("Save Error", "Failed to save magazine to file.");
                 return;
             }
 
+            // Load the main application UI after successful creation and saving
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MagazineServiceView.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
@@ -66,6 +83,7 @@ public class CreateMagazineController {
             stage.setTitle("Magazine Service Manager");
             stage.show();
 
+            // Close window
             ((Stage) magazineName.getScene().getWindow()).close();
 
         } catch (Exception e) {
@@ -74,6 +92,7 @@ public class CreateMagazineController {
         }
     }
 
+    // Alert
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

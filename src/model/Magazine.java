@@ -1,45 +1,45 @@
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: Magazine.java
+ * Purpose: Represents a magazine with a name and base price.
+ */
+
 package model;
 
 import java.io.Serializable;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+public class Magazine implements Serializable {
 
-/**
- *
- * @author Joseph
- */
-
-public class Magazine implements Serializable{
-    
     private static final long serialVersionUID = 1L;
-    
-    private String magName;
-    private float price;
-    
-    public Magazine(String magName, float price){
+
+    private String magName; // Magazine title
+    private float price;    // Weekly price
+
+    public Magazine(String magName, float price) {
         this.magName = magName;
         this.price = price;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return magName;
-    }  
-    
-    public float getPrice(){
-       return price; 
     }
-    
-    public float setName(String magName){
-        return 0;
+
+    public float getPrice() {
+        return price;
     }
-    
-    public float setPrice(float price){
-        if(price < 0){
-               System.out.println("invalid flaot was inputted");
-           }
-        return 0;
+
+    // Sets the magazine name
+    public void setName(String magName) {
+        this.magName = magName;
+    }
+
+    // Sets the magazine price with validation
+    public void setPrice(float price) {
+        if (price < 0) {
+            System.out.println("Invalid float was inputted");
+            return;
+        }
+        this.price = price;
     }
 }

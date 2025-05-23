@@ -1,12 +1,12 @@
-package service;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
  * File: MagazineService.java
- * Purpose: Provides methods for managing customer data and displaying supplements and billing information.
- *          Acts as the core service class in the magazine subscription system.
+ * Purpose: Core service class for managing customers, supplements, and billing in the magazine system.
  */
+
+package service;
+
 import model.Customer;
 import model.PayingCustomer;
 import model.AssociateCustomer;

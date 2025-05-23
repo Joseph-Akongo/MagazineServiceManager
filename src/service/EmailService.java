@@ -1,3 +1,10 @@
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: EmailService.java
+ * Purpose: Generates weekly billing email messages for different customer types.
+ */
+
 package service;
 
 import java.io.Serializable;
@@ -11,6 +18,7 @@ public class EmailService implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
+    // Generates a weekly billing summary email based on customer type
     public static String generateWeeklyEmail(Customer customer, double magCost) {
         StringBuilder email = new StringBuilder("Weekly Billing Summary for " + customer.getName() + "\n");
 
@@ -40,6 +48,7 @@ public class EmailService implements Serializable {
         return email.toString();
     }
     
+    // Generates a basic billing email for standard (non-enterprise) customers
     public static String generateStandardWeeklyEmail(Customer customer, double magazineCost) {
         StringBuilder sb = new StringBuilder("Dear " + customer.getName() + "\n");
 
@@ -61,6 +70,7 @@ public class EmailService implements Serializable {
         return sb.toString();
     }
 
+    // Builds a weekly billing email specifically for EnterpriseCustomers
     private static String generateEnterpriseWeeklyEmail(EnterpriseCustomer ec, double magazineCost) {
         StringBuilder sb = new StringBuilder("Dear " + ec.getName() + "\n");
 

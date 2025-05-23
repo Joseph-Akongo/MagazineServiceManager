@@ -1,19 +1,23 @@
-// New helper class to handle file operations
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: FileHelper.java
+ * Purpose: Handles loading and saving of MagazineData to/from .dat files, including dialogs and error alerts.
+ */
+
 package util;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-import model.Customer;
-import model.Magazine;
-import model.MagazineData;
+import model.*;
 import service.MagazineService;
-
+import javafx.scene.control.Alert;
 import java.io.*;
 import java.util.List;
-import javafx.scene.control.Alert;
 
 public class FileHelper {
-    
+
+    // Returns a pre-configured FileChooser for .dat files
     public static FileChooser getDatFileChooser(String title, boolean saveMode) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
@@ -24,7 +28,8 @@ public class FileHelper {
         }
         return fileChooser;
     }
-    
+
+    // Shows open file dialog for loading .dat files
     public static File showOpenDialog(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Magazine File");
@@ -33,6 +38,7 @@ public class FileHelper {
         return fileChooser.showOpenDialog(window);
     }
 
+    // Shows save file dialog for saving .dat files
     public static File showSaveDialog(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Magazine File");
@@ -42,6 +48,7 @@ public class FileHelper {
         return fileChooser.showSaveDialog(window);
     }
 
+    // Loads MagazineData from a file and populates the system
     public static boolean loadMagazineFromFile(File file) {
         if (file == null || !file.exists()) {
             showAlert("Load Failed", "No file selected or file does not exist.");
@@ -77,23 +84,23 @@ public class FileHelper {
         return false;
     }
 
+    // Saves current MagazineService state to a file
     public static boolean saveMagazineToFile(File file) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-            // Gather all data into MagazineData
-           List<Magazine> magazines = MagazineService.getMagazines();
+            List<Magazine> magazines = MagazineService.getMagazines();
             if (magazines.isEmpty()) {
                 showAlert("Save Error", "No magazine exists to save.");
                 return false;
             }
-            Magazine magazine = magazines.get(0);  // ✅ Get the first magazine
 
+            Magazine magazine = magazines.get(0);
             MagazineData data = new MagazineData(
                 magazine.getName(),
                 magazine.getPrice(),
                 MagazineService.getAvailableSupplements(),
                 MagazineService.getCustomers()
             );
-            
+
             System.out.println("Saving magazine: " + data.getMagazineName());
             System.out.println("Price: " + data.getPrice());
             System.out.println("Customers: " + data.getCustomers().size());
@@ -107,13 +114,13 @@ public class FileHelper {
             return false;
         }
     }
-    
+
+    // Displays an error alert dialog with the given message
     private static void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-}
-
+    }
 }

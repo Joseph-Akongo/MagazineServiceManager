@@ -3,19 +3,31 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.CreateSupplementController" spacing="10" alignment="TOP_LEFT" style="-fx-padding: 15;">
+<!--
+    Author: Joseph Akongo
+    File: CreateSupplementView.fxml
+    Purpose: FXML layout for adding a new magazine supplement with name and weekly cost.
+-->
 
+<!-- Main layout container -->
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.CreateSupplementController"
+      spacing="10" alignment="TOP_LEFT" style="-fx-padding: 15;">
+
+    <!-- Header title -->
     <Label text="Create Supplement" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
 
+    <!-- Input for supplement name -->
     <HBox spacing="10">
         <Label text="Name:"/>
         <TextField fx:id="nameField"/>
     </HBox>
 
+    <!-- Input for weekly cost -->
     <HBox spacing="10">
         <Label text="Weekly Cost:"/>
         <TextField fx:id="costField"/>
     </HBox>
 
+    <!-- Create button to trigger save logic -->
     <Button text="Create" onAction="#handleSave"/>
 </VBox>

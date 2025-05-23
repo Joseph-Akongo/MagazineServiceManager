@@ -1,4 +1,13 @@
-    package controller;
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: EditCustomerController.java
+ * Purpose: Allows editing of existing customer information including name, email,
+ *          supplements, payment method, payer (for associates), and contact person
+ *          (for enterprise customers). Also supports deleting customers from the system.
+ */
+
+package controller;
 
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -9,15 +18,16 @@ import javafx.stage.Stage;
 import javafx.scene.control.ButtonType;
 import model.*;
 import service.MagazineService;
-import model.CreditCard;
-import model.DirectDebit;
 import util.InputValidator;
 
 public class EditCustomerController {
 
+    // Common fields
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private ListView<CheckBox> supplementList;
+
+    // Payment method fields
     @FXML private ComboBox<String> paymentMethodCombo;
     @FXML private TextField cardNumberField;
     @FXML private TextField expiryField;
@@ -26,6 +36,8 @@ public class EditCustomerController {
     @FXML private TextField bsbField;
     @FXML private VBox debitFields;
     @FXML private VBox creditCardFields;
+
+    // Customer type specific sections
     @FXML private VBox associateBox;
     @FXML private VBox payingBox;
     @FXML private ComboBox<String> payerCombo;
@@ -35,62 +47,58 @@ public class EditCustomerController {
 
     private Customer customer;
     private TreeItem<String> customerItem;
-    
+
+    /**
+     * Initializes the payment method options and toggles fields on load.
+     */
     @FXML
     private void initialize() {
         paymentMethodCombo.setItems(FXCollections.observableArrayList("Credit Card", "Direct Debit"));
         paymentMethodCombo.setOnAction(e -> togglePaymentFields());
     }
-    
-    
+
+    /**
+     * Configures the UI with the current customer data.
+     */
     public void setCustomer(Customer customer, TreeItem<String> customerItem) {
         this.customer = customer;
         this.customerItem = customerItem;
 
-        // Set basic fields
+        // Set common fields
         nameField.setText(customer.getName());
         emailField.setText(customer.getEmail());
 
-        // Populate supplements with selection
+        // Populate supplements and mark selected
         supplementList.getItems().clear();
         for (Supplement s : MagazineService.getAvailableSupplements()) {
             CheckBox cb = new CheckBox(s.getName());
             cb.setSelected(customer.getSupplements().stream()
-                    .anyMatch(existing -> existing.getName().equals(s.getName())));
+                .anyMatch(existing -> existing.getName().equals(s.getName())));
             supplementList.getItems().add(cb);
         }
 
-        // Hide all optional sections initially
-        associateBox.setVisible(false);
-        associateBox.setManaged(false);
-        payingBox.setVisible(false);
-        payingBox.setManaged(false);
-        enterpriseBox.setVisible(false);
-        enterpriseBox.setManaged(false);
+        // Hide all customer-type specific sections by default
+        associateBox.setVisible(false); associateBox.setManaged(false);
+        payingBox.setVisible(false); payingBox.setManaged(false);
+        enterpriseBox.setVisible(false); enterpriseBox.setManaged(false);
 
-        // AssociateCustomer 
+        // AssociateCustomer: load payer list
         if (customer instanceof AssociateCustomer ac) {
-            associateBox.setVisible(true);
-            associateBox.setManaged(true);
-
+            associateBox.setVisible(true); associateBox.setManaged(true);
             List<String> payers = MagazineService.getCustomers().stream()
                     .filter(c -> c instanceof PayingCustomer)
                     .map(Customer::getName)
                     .toList();
-
             payerCombo.setItems(FXCollections.observableArrayList(payers));
             if (ac.getPayer() != null) {
                 payerCombo.getSelectionModel().select(ac.getPayer().getName());
             }
         }
 
-        // PayingCustomer (incl. EnterpriseCustomer) 
+        // PayingCustomer: load payment details
         if (customer instanceof PayingCustomer pc) {
-            payingBox.setVisible(true);
-            payingBox.setManaged(true);
-
+            payingBox.setVisible(true); payingBox.setManaged(true);
             PaymentMethod method = pc.getPaymentMethod();
-
             if (method == null) {
                 paymentMethodCombo.setValue(null);
                 showAlert("Missing Payment Method", "This customer has no payment method set.");
@@ -106,12 +114,10 @@ public class EditCustomerController {
                 cardNumberField.setText(creditCard.getCardNumber());
                 expiryField.setText(creditCard.getExpiryDate());
                 cardNameField.setText(creditCard.getCardHolderName());
-
             } else if (directDebit != null) {
                 paymentMethodCombo.setValue("Direct Debit");
                 accountNumberField.setText(String.valueOf(directDebit.getAccountNumber()));
                 bsbField.setText(String.valueOf(directDebit.getBsb()));
-
             } else {
                 paymentMethodCombo.setValue(null);
                 showAlert("Unknown Payment Method", "The payment method exists but is unrecognized.");
@@ -120,11 +126,9 @@ public class EditCustomerController {
             togglePaymentFields();
         }
 
-        // EnterpriseCustomer 
+        // EnterpriseCustomer: load contact person details
         if (customer instanceof EnterpriseCustomer ec) {
-            enterpriseBox.setVisible(true);
-            enterpriseBox.setManaged(true);
-
+            enterpriseBox.setVisible(true); enterpriseBox.setManaged(true);
             EnterpriseCustomer.ContactPerson contact = ec.getContact();
             if (contact != null) {
                 contactNameField.setText(contact.getContactName());
@@ -135,21 +139,23 @@ public class EditCustomerController {
             }
         }
     }
-    
+
+    /**
+     * Shows or hides payment input fields based on selected method.
+     */
     private void togglePaymentFields() {
         boolean isCard = "Credit Card".equals(paymentMethodCombo.getValue());
-
-        creditCardFields.setVisible(isCard);
-        creditCardFields.setManaged(isCard);
-
-        debitFields.setVisible(!isCard);
-        debitFields.setManaged(!isCard);
+        creditCardFields.setVisible(isCard); creditCardFields.setManaged(isCard);
+        debitFields.setVisible(!isCard); debitFields.setManaged(!isCard);
     }
 
+    /**
+     * Handles save button logic: updates the customer object and UI.
+     */
     @FXML
     private void handleSave() {
         try {
-            // Basic fields
+            // Set name and email
             customer.setName(nameField.getText());
             customer.setEmail(emailField.getText());
 
@@ -160,19 +166,15 @@ public class EditCustomerController {
                 .filter(s -> s != null).toList();
             customer.setSupplements(selected);
 
-            // AssociateCustomer payer
+            // Handle AssociateCustomer payer update
             if (customer instanceof AssociateCustomer ac) {
                 String payerName = payerCombo.getValue();
                 Customer payer = MagazineService.findCustomerByName(payerName);
                 if (payer instanceof PayingCustomer pc) {
                     PayingCustomer oldPayer = ac.getPayer();
-                if (oldPayer != null) {
-                    oldPayer.removeAssociate(ac);
-                }
-
-                ac.setPayer(pc);
-                pc.addAssociate(ac);
-
+                    if (oldPayer != null) oldPayer.removeAssociate(ac);
+                    ac.setPayer(pc);
+                    pc.addAssociate(ac);
                     MagazineController.getInstance().updateDetailView(pc);
                 } else {
                     showAlert("Invalid Payer", "Selected payer is not a paying customer.");
@@ -180,10 +182,9 @@ public class EditCustomerController {
                 }
             }
 
+            // Update payment method for PayingCustomer
             if (customer instanceof PayingCustomer pc) {
-                System.out.println("Befor save: " + pc.getPaymentMethod());
                 String selectedMethod = paymentMethodCombo.getValue();
-
                 if ("Credit Card".equals(selectedMethod)) {
                     String cardNum = cardNumberField.getText().trim();
                     String expiry = expiryField.getText().trim();
@@ -207,40 +208,28 @@ public class EditCustomerController {
 
                     int acc = Integer.parseInt(accStr);
                     int bsb = Integer.parseInt(bsbStr);
-                    
                     pc.setPaymentMethod(new PaymentMethod(new DirectDebit(acc, bsb)));
-
                 } else {
                     showAlert("Missing Payment Method", "Please select Credit Card or Direct Debit.");
                     return;
                 }
-
-                System.out.println("After save: " + pc.getPaymentMethod());
-                System.out.println("Method object type: " + pc.getPaymentMethod().getMethod().getClass().getName());
             }
 
-            // EnterpriseCustomer contact
+            // Update contact info for EnterpriseCustomer
             if (customer instanceof EnterpriseCustomer ec) {
                 ec.setContact(new EnterpriseCustomer.ContactPerson(
-                    contactNameField.getText(),
-                    contactEmailField.getText()
+                        contactNameField.getText(),
+                        contactEmailField.getText()
                 ));
             }
 
-            // Update TreeView label
+            // Update the TreeItem label in TreeView
             if (customerItem != null) {
-                customerItem.setValue(customer.getName());  // triggers UI label update
+                customerItem.setValue(customer.getName());
             }
 
-            // Refresh tree and right panel
+            // Refresh the UI tree and close the window
             MagazineController.getInstance().refreshTreeView();
-
-            // Close
-            ((Stage) nameField.getScene().getWindow()).close();
-
-
-
-            // Close
             ((Stage) nameField.getScene().getWindow()).close();
 
         } catch (NumberFormatException e) {
@@ -250,23 +239,27 @@ public class EditCustomerController {
             e.printStackTrace();
         }
     }
-    
-    public void handleDelete(){
+
+    /**
+     * Handles the delete button action, removing the customer from the system after confirmation.
+     */
+    public void handleDelete() {
         String name = customer.toString();
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete (this cannot be undone)?",
-        ButtonType.YES, ButtonType.CANCEL);
-        
-        
-        alert.showAndWait().ifPresent(buttonType ->{
-            if(buttonType == ButtonType.YES){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+            "Are you sure you want to delete (this cannot be undone)?",
+            ButtonType.YES, ButtonType.CANCEL);
+
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == ButtonType.YES) {
                 MagazineService.removeCustomer(name);
             }
-            
-            // Close Stage
-            ((Stage) nameField.getScene().getWindow()).close();            
+            ((Stage) nameField.getScene().getWindow()).close();
         });
     }
-    
+
+    /**
+     * Displays a warning alert to the user.
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -274,10 +267,10 @@ public class EditCustomerController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-    
+
+    // Alert
     @FXML
     private void handleCancel() {
-        // Close the current window
         Stage stage = (Stage) nameField.getScene().getWindow();
         stage.close();
     }

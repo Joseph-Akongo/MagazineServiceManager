@@ -6,20 +6,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.EditSupplementController" spacing="10" alignment="TOP_LEFT" style="-fx-padding: 15;">
-    
-<Label text="Edit Supplement" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+<!--
+    Author: Joseph Akongo
+    File: EditSupplementView.fxml
+    Purpose: FXML layout for editing an existing magazine supplement's name and weekly cost.
+-->
 
+<!-- Vertical layout for supplement editing interface -->
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="controller.EditSupplementController"
+      spacing="10" alignment="TOP_LEFT" style="-fx-padding: 15;">
+
+    <!-- Title label -->
+    <Label text="Edit Supplement" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+    <!-- Supplement name input -->
     <HBox spacing="10">
         <Label text="Name:"/>
         <TextField fx:id="nameField"/>
     </HBox>
 
+    <!-- Weekly cost input -->
     <HBox spacing="10">
         <Label text="Weekly Cost:"/>
         <TextField fx:id="costField"/>
     </HBox>
 
+    <!-- Save and delete actions -->
     <Button text="Create" onAction="#handleSave"/>
-    <Button text="Delete" onAction="#handleDelete" />
+    <Button text="Delete" onAction="#handleDelete"/>
 </VBox>

@@ -1,11 +1,18 @@
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: BillingService.java
+ * Purpose: Provides billing summaries (weekly/monthly) for all customer types.
+ */
+
 package service;
 
 import model.*;
-
 import java.time.YearMonth;
 
 public class BillingService {
 
+    // Builds a weekly billing summary for a customer
     public static String generateWeeklyBilling(Customer customer) {
         float magCost = MagazineService.getMagCost();
         StringBuilder summary = new StringBuilder();
@@ -65,6 +72,7 @@ public class BillingService {
         return summary.toString();
     }
 
+    // Builds a monthly billing summary for a customer
     public static String generateMonthlyBilling(Customer customer, int month, int year) {
         float magCost = MagazineService.getMagCost();
         int weeks = (int) Math.ceil(getDaysInMonth(month, year) / 7.0);
@@ -100,7 +108,6 @@ public class BillingService {
                         .append(": $").append(String.format("%.2f", s.getWeeklyCost() * weeks)).append("\n");
                     acTotal += s.getWeeklyCost() * weeks;
                 }
-
                 bill.append("- ").append(ac.getName()).append(": $").append(String.format("%.2f", acTotal)).append("\n");
                 total += acTotal;
             }
@@ -139,20 +146,19 @@ public class BillingService {
         return bill.toString();
     }
 
+    // Calculates total weekly charge for one customer
     public static float getWeeklyCharge(Customer customer) {
         float total = MagazineService.getMagCost();
-
         for (Supplement s : customer.getSupplements()) {
             total += s.getWeeklyCost();
         }
-
         if (customer instanceof EnterpriseCustomer ec) {
             total *= ec.getNumberOfCopies();
         }
-
         return total;
     }
 
+    // Returns number of days in the given month
     private static int getDaysInMonth(int month, int year) {
         return YearMonth.of(year, month).lengthOfMonth();
     }

@@ -1,7 +1,3 @@
-package model;
-
-import java.io.Serializable;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -9,6 +5,10 @@ import java.io.Serializable;
  * Purpose: A special type of PayingCustomer that includes a contact person and multiple magazine copies.
  *          Used for organizational subscriptions.
  */
+
+package model;
+
+import java.io.Serializable;
 
 // EnterpriseCustomer a specialized PayingCustomer who orders multiple copies for a company
 public class EnterpriseCustomer extends PayingCustomer implements Serializable {
@@ -72,10 +72,5 @@ public class EnterpriseCustomer extends PayingCustomer implements Serializable {
     
     public void setContact(ContactPerson contact) {
         this.contact = contact;
-    }
-
-    @Override
-    public String getSpecificInfo() {
-        return getPaymentMethod() != null ? getPaymentMethod().toString() : "";
     }
 }

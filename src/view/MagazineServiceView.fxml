@@ -4,7 +4,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<!--
+    Author: Joseph Akongo
+    File: MagazineServiceView.fxml
+    Purpose: Main GUI layout for managing customers, supplements, and billing in the Magazine Service System.
+-->
+
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MagazineController" prefWidth="800" prefHeight="500">
+
+    <!-- Top menu bar with navigation and action menus -->
     <top>
         <MenuBar>
             <menus>
@@ -36,56 +44,73 @@
         </MenuBar>
     </top>
 
+    <!-- Center layout with split pane: TreeView (left) and dynamic content (right) -->
     <center>
         <SplitPane>
             <items>
+                <!-- TreeView to navigate customers and supplements -->
                 <TreeView fx:id="treeView" minWidth="250.0"/>
+
+                <!-- Dynamic content pane to show details -->
                 <StackPane fx:id="mainContentPane">
                     
-                    <!-- Customer Detail Panel -->
-                    <VBox fx:id="detailsPane" spacing="15">
-                        <Label text="Customer Details" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                    <!-- Scrollable detail panel for customer information -->
+                    <ScrollPane fitToWidth="true" fitToHeight="true">
+                        <content>
+                            <VBox fx:id="detailsPane" spacing="15">
+                                <Label text="Customer Details" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
 
-                        <GridPane hgap="10" vgap="8">
-                            <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                            <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                <!-- Basic customer info -->
+                                <GridPane hgap="10" vgap="8">
+                                    <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <Label fx:id="nameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                            <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                            <Label fx:id="emailLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                    <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <Label fx:id="emailLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                            <Label text="Type:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                            <Label fx:id="typeLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                    <Label text="Type:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <Label fx:id="typeLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                            <Label fx:id="payerLabelTitle" text="Payer:" GridPane.rowIndex="3" GridPane.columnIndex="0" visible="false" managed="false"/>
-                            <Label fx:id="payerLabel" GridPane.rowIndex="3" GridPane.columnIndex="1" visible="false" managed="false"/>
-                        </GridPane>
+                                    <!-- Optional payer info for associates -->
+                                    <Label fx:id="payerLabelTitle" text="Payer:" GridPane.rowIndex="3" GridPane.columnIndex="0" visible="false" managed="false"/>
+                                    <Label fx:id="payerLabel" GridPane.rowIndex="3" GridPane.columnIndex="1" visible="false" managed="false"/>
+                                </GridPane>
 
-                        <VBox fx:id="payingBox" spacing="6" visible="false" managed="false">
-                            <Label text="Payment Method:"/>
-                            <Label fx:id="paymentMethodLabel"/>
-                        </VBox>
+                                <!-- Paying customer details -->
+                                <VBox fx:id="payingBox" spacing="6" visible="false" managed="false">
+                                    <Label text="Payment Method:"/>
+                                    <Label fx:id="paymentMethodLabel"/>
+                                </VBox>
 
-                        <VBox fx:id="enterpriseBox" spacing="5" visible="false" managed="false">
-                            <Label text="Contact Person:"/>
-                            <Label fx:id="contactPersonLabel"/>
-                            <Label text="Number of Copies:"/>
-                            <Label fx:id="numberOfCopiesLabel"/>
-                        </VBox>
+                                <!-- Enterprise customer details -->
+                                <VBox fx:id="enterpriseBox" spacing="5" visible="false" managed="false">
+                                    <Label text="Contact Person:"/>
+                                    <Label fx:id="contactPersonLabel"/>
+                                    <Label text="Number of Copies:"/>
+                                    <Label fx:id="numberOfCopiesLabel"/>
+                                </VBox>
 
-                        <VBox fx:id="associatesBox" spacing="5" visible="false" managed="false">
-                            <Label text="Associates:"/>
-                            <Label fx:id="listOfAssociates" wrapText="true"/>
-                        </VBox>
+                                <!-- Associates under a paying customer -->
+                                <VBox fx:id="associatesBox" spacing="5" visible="false" managed="false">
+                                    <Label text="Associates:"/>
+                                    <Label fx:id="listOfAssociates" wrapText="true"/>
+                                </VBox>
 
-                        <VBox fx:id="supplementsBox" spacing="5">
-                            <Label text="Supplements:"/>
-                            <ListView fx:id="supplementList" prefHeight="120"/>
-                        </VBox>
+                                <!-- Supplement list with its own scroll container -->
+                                <VBox fx:id="supplementsBox" spacing="5">
+                                    <Label text="Supplements:"/>
+                                    <ScrollPane prefHeight="120" prefWidth="300" fitToWidth="true">
+                                        <ListView fx:id="supplementList" prefHeight="120"/>
+                                    </ScrollPane>
+                                </VBox>
 
-                        <Button fx:id="billingButton" text="View Billing Info" />
-                    </VBox>
+                                <!-- Button to view detailed billing -->
+                                <Button fx:id="billingButton" text="View Billing Info" />
+                            </VBox>
+                        </content>
+                    </ScrollPane>
 
-                    <!-- Supplement Detail Panel -->
+                    <!-- Panel for showing supplement details -->
                     <VBox fx:id="supplementDetailBox" spacing="10" visible="false" managed="false" alignment="TOP_LEFT" style="-fx-padding: 20;">
                         <Label text="Supplement Details" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
                         <Label text="Name:" />
@@ -94,7 +119,7 @@
                         <Label fx:id="supplementCostLabel" />
                     </VBox>
 
-                    <!-- Billing Panel -->
+                    <!-- Include billing panel -->
                     <fx:include source="BillingView.fxml" fx:id="billingPane"/>
 
                 </StackPane>
@@ -102,6 +127,7 @@
         </SplitPane>
     </center>
 
+    <!-- Footer for status updates -->
     <bottom>
         <Label fx:id="footer" text="Status: Ready"/>
     </bottom>

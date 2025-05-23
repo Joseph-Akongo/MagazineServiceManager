@@ -4,11 +4,20 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<!--
+    Author: Joseph Akongo
+    File: EditCustomerView.fxml
+    Purpose: FXML layout for editing customer details, including payment methods, supplements, and specific fields for associate and enterprise types.
+-->
+
+<!-- Root container for the edit customer form -->
 <VBox spacing="15" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EditCustomerController">
     <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
+    <!-- Header title -->
     <Label text="Edit Customer Details" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
+    <!-- Basic info grid -->
     <GridPane hgap="10" vgap="10">
         <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
@@ -17,35 +26,36 @@
         <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
     </GridPane>
 
+    <!-- Supplements list -->
     <Label text="Supplements:"/>
     <ListView fx:id="supplementList" prefHeight="100"/>
 
-    <!-- Payer Section for Associate -->
+    <!-- Section visible for AssociateCustomers -->
     <VBox fx:id="associateBox" spacing="5" visible="false" managed="false">
         <Label text="Select Payer:"/>
         <ComboBox fx:id="payerCombo"/>
     </VBox>
 
-    <!-- Payment Section -->
+    <!-- Section visible for PayingCustomers -->
     <VBox fx:id="payingBox" spacing="10" visible="false" managed="false">
         <Label text="Payment Method:"/>
         <ComboBox fx:id="paymentMethodCombo"/>
 
-        <!-- Credit Card Fields -->
+        <!-- Credit card fields shown if method is "Credit Card" -->
         <VBox fx:id="creditCardFields" spacing="5" visible="false" managed="false">
             <TextField fx:id="cardNumberField" promptText="Card Number"/>
             <TextField fx:id="expiryField" promptText="MM/YY"/>
             <TextField fx:id="cardNameField" promptText="Card Holder Name"/>
         </VBox>
 
-        <!-- Direct Debit Fields -->
+        <!-- Direct debit fields shown if method is "Direct Debit" -->
         <VBox fx:id="debitFields" spacing="5" visible="false" managed="false">
             <TextField fx:id="accountNumberField" promptText="Account Number"/>
             <TextField fx:id="bsbField" promptText="BSB"/>
         </VBox>
     </VBox>
 
-    <!-- Enterprise Contact Info -->
+    <!-- Section visible for EnterpriseCustomers -->
     <VBox fx:id="enterpriseBox" spacing="5" visible="false" managed="false">
         <Label text="Contact Name:"/>
         <TextField fx:id="contactNameField"/>
@@ -53,7 +63,7 @@
         <TextField fx:id="contactEmailField"/>
     </VBox>
 
-    <!-- Buttons -->
+    <!-- Action buttons: save, cancel, delete -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button fx:id="saveButton" text="Save" onAction="#handleSave"/>
         <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>

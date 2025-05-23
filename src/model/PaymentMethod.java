@@ -1,7 +1,3 @@
-package model;
-
-import java.io.Serializable;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -9,6 +5,10 @@ import java.io.Serializable;
  * Purpose: A wrapper class for either a CreditCard or DirectDebit method used by a customer.
  *          Ensures uniform handling of different payment types.
  */
+
+package model;
+
+import java.io.Serializable;
 
 // Wraper for payment methods Credit Card / Direct Debit and ensures only one type is used at a time.
 public class PaymentMethod implements Serializable {

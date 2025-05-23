@@ -1,5 +1,3 @@
-package model;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -7,6 +5,8 @@ package model;
  * Purpose: Represents a direct debit payment option using BSB and account number.
  *          Used as a payment method in the subscription system.
  */
+
+package model;
 
 import java.io.Serializable;
 import java.util.Scanner;
@@ -26,10 +26,6 @@ public class DirectDebit implements Serializable {
         }
         this.accountNumber = accountNumber;
         this.bsb = bsb;
-    }
-
-    public DirectDebit() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     // Validation method for account number (1 to 8 digits)

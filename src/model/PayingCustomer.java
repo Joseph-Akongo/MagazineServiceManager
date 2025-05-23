@@ -1,5 +1,3 @@
-package model;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -7,6 +5,8 @@ package model;
  * Purpose: Represents a paying customer who may also be responsible for associate customers.
  *          Stores payment method and a list of associated customers.
  */
+
+package model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,12 +55,6 @@ public class PayingCustomer extends Customer implements Serializable {
     public void removeAssociate(AssociateCustomer ac) {
         if (ac != null) {
             associates.remove(ac);
-        }
-    }
-
-    public void setSpecificInfo(String info) {
-        if (info != null && !info.isEmpty()) {
-            this.paymentMethod = new PaymentMethod(info); 
         }
     }
 }

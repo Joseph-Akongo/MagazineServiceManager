@@ -1,5 +1,3 @@
-package model;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
@@ -7,6 +5,8 @@ package model;
  * Purpose: Models a credit card with cardholder name, number, and expiry date.
  *          Used as a payment method in the subscription system.
  */
+
+package model;
 
 // CreditCard extends PaymentMethod — using inheritance to specialize payment behavior
 import java.io.Serializable;
@@ -31,10 +31,6 @@ public class CreditCard implements Serializable {
         this.cardHolderName = cardHolderName;
     }
 
-    public CreditCard() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     // Validation logic to check if card data is properly formatted
     // Returns 1 if valid, 0 if invalid — simple but clear
     public int checkCardValidity() {
@@ -50,6 +46,7 @@ public class CreditCard implements Serializable {
         return 1; // Valid card
     }
 
+    // Left over from Assignment 1
     public static CreditCard createFromInput(Scanner scanner) {
         System.out.print("Enter card number: ");
         String number = scanner.nextLine();

@@ -1,3 +1,12 @@
+/**
+ * Author: Joseph Akongo
+ * Student Number: 33255426
+ * File: MagazineController.java
+ * Purpose: Main controller for managing the Magazine Service system UI.
+ *          Handles creation, editing, viewing, billing, file operations, and data loading
+ *          for customers and supplements.
+ */
+
 package controller;
 
 import java.io.File;
@@ -23,33 +32,17 @@ public class MagazineController {
     
     @FXML private ListView<String> supplementList;
     @FXML private TreeView<String> treeView;
-    @FXML private Label typeLabel;
-    @FXML private Label nameLabel;
-    @FXML private Label emailLabel;
-    @FXML private Label payerLabel;
-    @FXML private Label paymentMethodLabel;
-    @FXML private Label contactPersonLabel;
-    @FXML private Label footer;
-    @FXML private Label payerLabelTitle;
-    @FXML private Label numberOfCopiesLabel;
-    @FXML private Label listOfAssociates;
-    @FXML private Label supplementNameLabel;
-    @FXML private Label supplementCostLabel;
+    @FXML private Label typeLabel, nameLabel, emailLabel, payerLabel, paymentMethodLabel, contactPersonLabel;
+    @FXML private Label footer, payerLabelTitle, numberOfCopiesLabel, listOfAssociates;
+    @FXML private Label supplementNameLabel, supplementCostLabel;
     @FXML private StackPane mainContentPane;
-    @FXML private VBox supplementDetailBox;
-    @FXML private VBox detailsPane;
-    @FXML private VBox payingBox;
-    @FXML private VBox associatesBox;
-    @FXML private VBox enterpriseBox;
-    @FXML private MenuItem createPaying;
-    @FXML private MenuItem createAssociate;
-    @FXML private MenuItem createEnterprise;
-    @FXML private MenuItem editCustomer;
-    @FXML private MenuItem loadFile;
+    @FXML private VBox supplementDetailBox, detailsPane, payingBox, associatesBox, enterpriseBox;
+    @FXML private MenuItem createPaying, createAssociate, createEnterprise, editCustomer, loadFile;
     @FXML private Button billingButton;
     
     private Customer currentCustomer;
 
+    // Initializes the controller and configures event handlers for UI actions.
     @FXML
     public void initialize() {
         loadTreeData();
@@ -213,6 +206,7 @@ public class MagazineController {
         treeView.setRoot(root);
     }
     
+    // Refreshes the tree view while keeping the magazine root.
     public void refreshTreeView() {
         treeView.getRoot().getChildren().clear();
         for (Customer c : MagazineService.getCustomers()) {
@@ -245,6 +239,7 @@ public class MagazineController {
         supplementCostLabel.setText("$" + s.getWeeklyCost());
     }
 
+    // Editing of a selected customer.
     private void handleEdit() {
         TreeItem<String> selectedItem = treeView.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
@@ -433,6 +428,7 @@ public class MagazineController {
         }
     }
 
+    // Opens the billing pane for the selected paying customer
     @FXML
     private void handleBillingView() {
         try {
@@ -452,11 +448,13 @@ public class MagazineController {
         }
     }
 
+    // Exit
     @FXML
     private void handleExit() {
         Platform.exit();
     }
-
+    
+    //Alert
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

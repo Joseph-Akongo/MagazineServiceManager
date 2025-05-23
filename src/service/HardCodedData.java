@@ -1,11 +1,11 @@
-package service;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
  * File: HardCodedData.java
  * Purpose: Loads preset data for testing the magazine subscription system including customers and supplements.
  */
+
+package service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,13 +21,15 @@ import model.PaymentMethod;
 import model.Supplement;
 
 public class HardCodedData {
+    
+    // Wrapper method to expose loadData if needed elsewhere
     public void hardcodedData() {
         loadData();
     }
 
     public static void loadData() {
-        // Clear previous customer data
-        MagazineService.clearCustomers();
+        
+        MagazineService.clearCustomers(); // Clear previous customer data
 
         // Create supplement options
         Supplement sports = new Supplement("Sports", 2.0);
@@ -90,10 +92,10 @@ public class HardCodedData {
 
         // Create MagazineData object
         MagazineData data = new MagazineData(
-            "Tech World Weekly",                       // Magazine name
-            9.99f,                                     // Magazine price
-            MagazineService.getAvailableSupplements(),// Supplement list
-            MagazineService.getCustomers()            // All customers
+            "Tech World Weekly",                       
+            9.99f,                                     
+            MagazineService.getAvailableSupplements(),
+            MagazineService.getCustomers()            
         );
 
         // Save to file

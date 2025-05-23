@@ -1,13 +1,13 @@
-package model;
-
-import java.io.Serializable;
-
 /**
  * Author: Joseph Akongo
  * Student Number: 33255426
  * File: Supplement.java
  * Purpose: Represents optional magazine content a customer can subscribe to, with a name and weekly cost.
  */
+
+package model;
+
+import java.io.Serializable;
 
 // Add-on to a customer's magazine subscription.
 public class Supplement implements Serializable {
@@ -47,7 +47,6 @@ public class Supplement implements Serializable {
         return weeklyCost;
     }
 
-    // Optional: Useful for displaying in menus or summaries
     @Override
     public String toString() {
         return name + " ($" + String.format("%.2f", weeklyCost) + "/week)";
