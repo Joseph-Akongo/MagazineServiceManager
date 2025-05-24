@@ -24,7 +24,7 @@ public class FileHelper {
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("DAT files", "*.dat"));
         if (saveMode) {
-            fileChooser.setInitialFileName("magazineData.dat");
+            fileChooser.setInitialFileName(".dat");
         }
         return fileChooser;
     }
@@ -43,7 +43,7 @@ public class FileHelper {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Magazine File");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("DAT files", "*.dat"));
-        fileChooser.setInitialFileName("magazineData.dat");
+        fileChooser.setInitialFileName(".dat");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         return fileChooser.showSaveDialog(window);
     }

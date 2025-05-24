@@ -19,7 +19,7 @@ import model.PaymentMethod;
 
 // Controller class.
 public class MagazineService {
-    private static List<Magazine> magazines = new ArrayList<>();
+    private static final List<Magazine> magazines = new ArrayList<>();
 
     // Storage for all customer types (Paying, Associate, Enterprise)
     static List<Customer> customers = new ArrayList<>();
@@ -100,8 +100,7 @@ public class MagazineService {
 
         for (Customer c : customers) {
             // Billing applies only to paying customers
-            if (c instanceof PayingCustomer) {
-                PayingCustomer pc = (PayingCustomer) c;
+            if (c instanceof PayingCustomer pc) {
                 System.out.println("Payment method for " + pc.getName() + ": " + pc.getPaymentMethod());
                 System.out.println(BillingService.generateMonthlyBilling(pc, month, currentYear));
             }
@@ -193,15 +192,13 @@ public class MagazineService {
             // Avoid printing associates, already printed under their payer
             if (c instanceof AssociateCustomer) continue;
 
-            if (c instanceof EnterpriseCustomer) {
-                EnterpriseCustomer ec = (EnterpriseCustomer) c;
+            if (c instanceof EnterpriseCustomer ec) {
                 System.out.println("Enterprise Customer: " + ec.getName() + " (" + ec.getEmail() + ")");
                 System.out.println("  Contact Person: " + ec.getContact().getContactDetails());
                 System.out.println("  Number of Copies: " + ec.getNumberOfCopies());
                 System.out.println("  Payment method: " + ec.getPaymentMethod());
 
-            } else if (c instanceof PayingCustomer) {
-                PayingCustomer pc = (PayingCustomer) c;
+            } else if (c instanceof PayingCustomer pc) {
                 System.out.println("Paying Customer: " + pc.getName() + " (" + pc.getEmail() + ")");
                 System.out.println("  Payment method: " + pc.getPaymentMethod());
 
@@ -229,16 +226,14 @@ public class MagazineService {
                 System.out.println("Name: " + c.getName());
                 System.out.println("Email: " + c.getEmail());
 
-                if (c instanceof EnterpriseCustomer) {
-                    EnterpriseCustomer ec = (EnterpriseCustomer) c;
+                if (c instanceof EnterpriseCustomer ec) {
                     System.out.println("Customer Type: Enterprise Customer");
                     System.out.println("Contact Person: " + ec.getContact().getContactDetails());
                     System.out.println("Payment Method: " + ec.getPaymentMethod()); 
                     System.out.println("Number of Copies: " + ec.getNumberOfCopies());
                     printSupplements(ec.getSupplements());
 
-                } else if (c instanceof PayingCustomer) {
-                    PayingCustomer pc = (PayingCustomer) c;
+                } else if (c instanceof PayingCustomer pc) {
                     System.out.println("Customer Type: Paying Customer");
                     System.out.println("Payment Method: " + pc.getPaymentMethod());
                     printSupplements(pc.getSupplements());
@@ -251,8 +246,7 @@ public class MagazineService {
                         }
                     }
 
-                } else if (c instanceof AssociateCustomer) {
-                    AssociateCustomer ac = (AssociateCustomer) c;
+                } else if (c instanceof AssociateCustomer ac) {
                     System.out.println("Customer Type: Associate Customer");
                     printSupplements(ac.getSupplements());
 

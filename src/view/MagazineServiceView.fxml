@@ -24,7 +24,6 @@
                         <MenuItem fx:id="exitApp" text="Exit" onAction="#handleExit"/>
                     </items>
                 </Menu>
-                <Menu fx:id="homeButton" text="Home"/>
                 <Menu text="Create">
                     <items>
                         <MenuItem fx:id="createPaying" text="Paying Customer"/>
