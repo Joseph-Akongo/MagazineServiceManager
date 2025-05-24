@@ -32,6 +32,8 @@
     </HBox>
 
     <!-- Save and delete actions -->
-    <Button text="Create" onAction="#handleSave"/>
-    <Button text="Delete" onAction="#handleDelete"/>
+    <HBox spacing="10" alignment="BOTTOM_LEFT">
+        <Button text="Save" onAction="#handleSave"/>
+        <Button text="Delete" onAction="#handleDelete"/>
+    </HBox>
 </VBox>
