@@ -20,10 +20,7 @@ public class CreateSupplementController {
     @FXML private TextField nameField; // Input for supplement name
     @FXML private TextField costField; // Input for supplement weekly cost
 
-    /**
-     * Triggered when the user clicks the "Save" button.
-     * Validates inputs, creates a new Supplement object, and adds it to the MagazineService.
-     */
+    // Validates inputs, creates a new Supplement object, and adds it to the MagazineService.
     @FXML
     private void handleSave() {
         String name = nameField.getText().trim();
@@ -52,18 +49,13 @@ public class CreateSupplementController {
         }
     }
 
-    /**
-     * Triggered when the user clicks the "Cancel" button.
-     * Simply closes the current window without saving.
-     */
+    // Closes the current window without saving.
     @FXML
     private void handleCancel() {
         closeWindow();
     }
 
-    /**
-     * Closes the window that this controller is managing.
-     */
+    // Closes the window that this controller is managing.
     private void closeWindow() {
         Stage stage = (Stage) nameField.getScene().getWindow();
         stage.close();

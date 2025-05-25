@@ -29,9 +29,8 @@ public class LaunchScreenController {
 
     @FXML private Button startButton; // Button to start creating a new magazine
 
-    /**
-     * Opens the "Create Magazine" view and closes the launch screen.
-     */
+    
+    // Opens the "Create Magazine" view and closes the launch screen.
     @FXML
     public void handleStart() {
         try {
@@ -47,10 +46,7 @@ public class LaunchScreenController {
         }
     }
 
-    /**
-     * Allows the user to select and load a previously saved magazine file (.dat).
-     * If successful, it opens the main Magazine Service UI.
-     */
+     // load a previously saved magazine file (.dat) opens the main Magazine Service UI.
     @FXML
     public void handleLoad() {
         FileChooser fileChooser = FileHelper.getDatFileChooser("Open Magazine File", false);
@@ -71,9 +67,7 @@ public class LaunchScreenController {
         }
     }
 
-    /**
-     * Loads hardcoded data into the system, shows confirmation, and opens the main UI.
-     */
+    // Load hardcoded data into the system, shows confirmation, and opens the main UI.
     @FXML
     public void handleLoadPreset() {
         // Load predefined data
@@ -101,9 +95,8 @@ public class LaunchScreenController {
         }
     }
 
-    /**
-     * Displays the developer credits using information from myInfo.java.
-     */
+    
+    // Displays the developer credits using information from myInfo.java.
     public void handleShowCredits() {
         myInfo info = new myInfo();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

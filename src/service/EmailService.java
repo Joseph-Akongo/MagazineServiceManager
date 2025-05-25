@@ -8,10 +8,8 @@
 package service;
 
 import java.io.Serializable;
-import model.AssociateCustomer;
 import model.Customer;
 import model.EnterpriseCustomer;
-import model.PayingCustomer;
 import model.Supplement;
 
 public class EmailService implements Serializable {

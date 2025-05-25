@@ -24,21 +24,16 @@ public class EditSupplementController {
 
     private Supplement supplement; // Reference to the supplement being edited
 
-    /**
-     * Sets the supplement to be edited and populates the form fields with its current data.
-     * 
-     * @param s the supplement object to edit
-     */
+
+    // Sets the supplement to be edited 
+   
     public void setSupplement(Supplement s) {
         this.supplement = s;
         nameField.setText(s.getName());
         costField.setText(String.valueOf(s.getWeeklyCost()));
     }
 
-    /**
-     * Handles saving the updated supplement information.
-     * Updates the name and weekly cost, then closes the window.
-     */
+    // Handles saving the updated supplement information
     @FXML
     private void handleSave() {
         supplement.setName(nameField.getText().trim());
@@ -46,10 +41,7 @@ public class EditSupplementController {
         ((Stage) nameField.getScene().getWindow()).close();
     }
 
-    /**
-     * Handles deleting the supplement from the system.
-     * Prompts the user for confirmation before removal.
-     */
+    // Handles deleting the supplement from the system.
     @FXML
     private void handleDelete() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);

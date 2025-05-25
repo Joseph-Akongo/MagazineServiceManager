@@ -47,11 +47,6 @@ public class PayingCustomer extends Customer implements Serializable {
         this.paymentMethod = method;
     }
     
-    @Override
-    public String getSpecificInfo() {
-        return paymentMethod != null ? paymentMethod.toString() : "";
-    }
-    
     public void removeAssociate(AssociateCustomer ac) {
         if (ac != null) {
             associates.remove(ac);

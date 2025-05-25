@@ -70,7 +70,6 @@ public class BillingController {
         billingRoot.setManaged(true);
     }
 
-    
     // Loads weekly billing information on a background thread and displays the result.
     private void loadWeeklyBillingAsync() {
         Task<String> task = new Task<>() {
@@ -100,7 +99,6 @@ public class BillingController {
         new Thread(task).start(); // Run the task in a new thread
     }
 
-    
     // Synchronously updates monthly billing, used internally or for specific fallback logic.
     private void updateMonthlyBilling(int month) {
         if (customer instanceof PayingCustomer) {
@@ -110,10 +108,8 @@ public class BillingController {
             monthlyBillingArea.setText("Monthly billing is only available for Paying Customers.");
         }
     }
-
     
     // Handles the back button. Returns to the customer details panel.
-     
     @FXML
     private void handleBack() {
         billingRoot.setVisible(false);

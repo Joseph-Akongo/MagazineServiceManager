@@ -20,9 +20,7 @@ public class EditMagazineController {
     @FXML private TextField nameField;  // Text field for editing the magazine's name
     @FXML private TextField priceField; // Text field for editing the magazine's price
 
-    /**
-     * Initializes the form by preloading existing magazine data into the input fields.
-     */
+    // Initializes the form by preloading existing magazine data into the input fields.
     @FXML
     public void initialize() {
         Magazine mag = MagazineService.getMagazine();
@@ -32,10 +30,8 @@ public class EditMagazineController {
         }
     }
 
-    /**
-     * Handles the save button click.
-     * Validates and updates the magazine's name and price, and closes the window if successful.
-     */
+
+    // Handles the save button click.
     @FXML
     private void handleSave() {
         String name = nameField.getText().trim();

@@ -185,8 +185,8 @@ public class MagazineService {
         }
     }
 
-    // Display a list of all customers
-    public static void showAllCustomers() {
+    // Left over from assignment 1
+    public static void showAllCustomers() { 
         System.out.println("\n----------------- All Customers ----------------");
         for (Customer c : customers) {
             // Avoid printing associates, already printed under their payer
@@ -210,7 +210,7 @@ public class MagazineService {
         }
     }
 
-    // Searches for a customer by name and prints detailed info
+    // left over from assignment 1
     public static void searchCustomer(String searchName) {
         boolean found = false;
         System.out.println("Searching for: " + searchName);

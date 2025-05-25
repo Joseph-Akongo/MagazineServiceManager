@@ -46,6 +46,7 @@ public class DirectDebit implements Serializable {
         return bsb;
     }
 
+    // Leftover from assignemnt 1
     public static DirectDebit createFromInput(Scanner scanner) {
         try {
             System.out.print("Enter account number: ");

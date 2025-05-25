@@ -42,10 +42,7 @@ public class CreatePayingCustomerController {
 
     private List<CheckBox> supplementCheckboxes = new ArrayList<>(); // Track selected supplements
 
-    /**
-     * Initializes the controller after the FXML file has been loaded.
-     * Sets up the payment method options and supplement checkboxes.
-     */
+    // Sets up the payment method options and supplement checkboxes.
     @FXML
     public void initialize() {
         // Populate the payment method combo box
@@ -65,9 +62,7 @@ public class CreatePayingCustomerController {
         }
     }
 
-    /**
-     * Shows or hides input fields based on the selected payment method.
-     */
+    // Shows or hides input fields based on the selected payment method.
     private void togglePaymentFields() {
         boolean isCard = "Credit Card".equals(paymentMethodBox.getValue());
 
@@ -78,10 +73,7 @@ public class CreatePayingCustomerController {
         debitFields.setManaged(!isCard);
     }
 
-    /**
-     * Called when the user clicks the "Create" button.
-     * Validates input, builds the PayingCustomer object, and adds them to the system.
-     */
+     // Validates input, builds the PayingCustomer object, and adds them to the system.
     @FXML
     private void handleCreate() {
         String name = nameField.getText().trim();

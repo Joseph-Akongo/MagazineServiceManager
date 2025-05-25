@@ -48,18 +48,14 @@ public class EditCustomerController {
     private Customer customer;
     private TreeItem<String> customerItem;
 
-    /**
-     * Initializes the payment method options and toggles fields on load.
-     */
+    // Initializes the payment method options and toggles fields on load.
     @FXML
     private void initialize() {
         paymentMethodCombo.setItems(FXCollections.observableArrayList("Credit Card", "Direct Debit"));
         paymentMethodCombo.setOnAction(e -> togglePaymentFields());
     }
 
-    /**
-     * Configures the UI with the current customer data.
-     */
+    // Configures the UI with the current customer data.
     public void setCustomer(Customer customer, TreeItem<String> customerItem) {
         this.customer = customer;
         this.customerItem = customerItem;
@@ -140,18 +136,15 @@ public class EditCustomerController {
         }
     }
 
-    /**
-     * Shows or hides payment input fields based on selected method.
-     */
+    // Shows or hides payment input fields based on selected method.
     private void togglePaymentFields() {
         boolean isCard = "Credit Card".equals(paymentMethodCombo.getValue());
         creditCardFields.setVisible(isCard); creditCardFields.setManaged(isCard);
         debitFields.setVisible(!isCard); debitFields.setManaged(!isCard);
     }
 
-    /**
-     * Handles save button logic: updates the customer object and UI.
-     */
+
+    // Handles save button logic: updates the customer object and UI.
     @FXML
     private void handleSave() {
         try {
@@ -240,9 +233,7 @@ public class EditCustomerController {
         }
     }
 
-    /**
-     * Handles the delete button action, removing the customer from the system after confirmation.
-     */
+    // Handles the delete button action, removing the customer from the system after confirmation.
     public void handleDelete() {
         String name = customer.toString();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
@@ -257,9 +248,7 @@ public class EditCustomerController {
         });
     }
 
-    /**
-     * Displays a warning alert to the user.
-     */
+    // Displays a warning alert to the user.
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
